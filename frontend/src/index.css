@@ -1,8 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+}
+
 /* Global base styles */
+html {
+  font-size: 108%; /* Scales up all Tailwind rems by ~8% (17.2px base) */
+}
+
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.015em;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
