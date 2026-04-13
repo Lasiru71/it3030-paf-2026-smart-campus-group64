@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   Users, BookOpen, BarChart3, Settings, Shield,
-  Trash2, Edit, LogOut, Bell, Search, TrendingUp,
+  Trash2, Edit, LogOut, Bell, Search, TrendingUp, Filter,
   Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3,
   Globe, Lock, Palette, Server, Mail, Smartphone, Moon, Sun, Database, RefreshCw, Save, Download,
   FileText
@@ -405,8 +405,9 @@ export default function AdminDashboardPage() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState(mockUsers);
   const [toast, setToast] = useState(null);
-  const [activeNav, setActiveNav] = useState("Overview");
+  const [activeNav, setActiveNav] = useState("Users");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [roleFilter, setRoleFilter] = useState("All");
 
   // Derive dynamic stats from users array (real or mock fallback)
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
@@ -626,8 +627,9 @@ export default function AdminDashboardPage() {
 
   const filtered = users.filter(
     (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      (u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())) &&
+      (roleFilter === "All" || u.role === roleFilter)
   );
 
   return (
@@ -1000,7 +1002,20 @@ export default function AdminDashboardPage() {
                   <div>
                     <h2 className="text-xl font-bold text-slate-800">User Directory</h2>
                   </div>
-                  <div className="flex items-center gap-4 flex-1 max-w-2xl justify-end">
+                  <div className="flex items-center gap-4 flex-1 max-w-4xl justify-end">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-slate-400" />
+                      <select
+                        value={roleFilter}
+                        onChange={(e) => setRoleFilter(e.target.value)}
+                        className="text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
+                      >
+                        <option value="All">All Roles</option>
+                        <option value="ADMIN">Administrators</option>
+                        <option value="USER">Users</option>
+                        <option value="TECHNICIAN">Technicians</option>
+                      </select>
+                    </div>
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <input
@@ -1024,8 +1039,8 @@ export default function AdminDashboardPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-white border-b border-slate-100">
-                        {["Name", "Email", "Status", "Actions"].map((h) => (
+                      <tr className="bg-slate-50 border-b border-slate-100">
+                        {["Name", "Email", "Role", "Status", "Actions"].map((h) => (
                           <th key={h} className="text-left px-7 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">
                             {h}
                           </th>
@@ -1039,11 +1054,19 @@ export default function AdminDashboardPage() {
                           className="hover:bg-slate-50/50 transition-colors"
                         >
                           <td className="px-7 py-5">
-                            <span className="font-bold text-blue-600 hover:underline cursor-pointer">{user.name}</span>
+                            <span className="font-bold text-blue-600 hover:underline cursor-pointer transition-all">{user.name}</span>
                           </td>
                           <td className="px-7 py-5 text-slate-500 font-medium">{user.email}</td>
                           <td className="px-7 py-5">
-                            <span className="text-sm font-bold text-slate-700">{user.status}</span>
+                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase shadow-sm ${roleStyle[user.role] || roleStyle.USER}`}>
+                              {user.role}
+                            </span>
+                          </td>
+                          <td className="px-7 py-5">
+                            <div className="flex items-center gap-2">
+                              <div className={`h-1.5 w-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}`} />
+                              <span className="text-sm font-bold text-slate-700">{user.status}</span>
+                            </div>
                           </td>
                           <td className="px-7 py-5">
                             <div className="flex items-center gap-3">
@@ -1073,7 +1096,7 @@ export default function AdminDashboardPage() {
 
                       {filtered.length === 0 && (
                         <tr>
-                          <td colSpan={6} className="text-center py-12 text-slate-400">
+                          <td colSpan={5} className="text-center py-12 text-slate-400">
                             <Users className="h-8 w-8 mx-auto mb-2 opacity-20" />
                             <p className="font-semibold text-sm">No users match your search</p>
                           </td>
