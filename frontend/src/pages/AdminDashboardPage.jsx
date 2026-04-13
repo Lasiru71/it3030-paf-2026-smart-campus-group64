@@ -408,6 +408,7 @@ export default function AdminDashboardPage() {
   const [activeNav, setActiveNav] = useState("Users");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState("All");
+  const [hoveredRole, setHoveredRole] = useState(null);
 
   // Derive dynamic stats from users array (real or mock fallback)
   const adminCount = users.filter((u) => u.role === "ADMIN").length;
@@ -822,11 +823,45 @@ export default function AdminDashboardPage() {
                   <div className="p-7 flex flex-col items-center justify-center">
                     <svg viewBox="0 0 200 200" className="w-44 h-44">
                       <circle cx="100" cy="100" r="70" fill="none" stroke="#e2e8f0" strokeWidth="20" />
-                      <circle cx="100" cy="100" r="70" fill="none" stroke="#10b981" strokeWidth="20" strokeDasharray={`${(standardCount / totalUsers) * 439.82} ${439.82}`} strokeDashoffset="0" transform="rotate(-90 100 100)" strokeLinecap="round" />
-                      <circle cx="100" cy="100" r="70" fill="none" stroke="#6366f1" strokeWidth="20" strokeDasharray={`${(techCount / totalUsers) * 439.82} ${439.82}`} strokeDashoffset={`${-(standardCount / totalUsers) * 439.82}`} transform="rotate(-90 100 100)" strokeLinecap="round" />
-                      <circle cx="100" cy="100" r="70" fill="none" stroke="#1e1b4b" strokeWidth="20" strokeDasharray={`${(adminCount / totalUsers) * 439.82} ${439.82}`} strokeDashoffset={`${-((standardCount + techCount) / totalUsers) * 439.82}`} transform="rotate(-90 100 100)" strokeLinecap="round" />
-                      <text x="100" y="95" textAnchor="middle" fill="#1e293b" fontSize="28" fontWeight="800">{totalUsers}</text>
-                      <text x="100" y="115" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="600">TOTAL</text>
+                      {/* Students */}
+                      <circle
+                        cx="100" cy="100" r="70" fill="none" stroke="#10b981" strokeWidth="20"
+                        strokeDasharray={`${(standardCount / totalUsers) * 439.82} ${439.82}`}
+                        strokeDashoffset="0"
+                        transform="rotate(-90 100 100)"
+                        strokeLinecap="round"
+                        className="cursor-pointer transition-all duration-300 hover:stroke-[25px]"
+                        onMouseEnter={() => setHoveredRole({ label: "Students", count: standardCount })}
+                        onMouseLeave={() => setHoveredRole(null)}
+                      />
+                      {/* Technicians */}
+                      <circle
+                        cx="100" cy="100" r="70" fill="none" stroke="#6366f1" strokeWidth="20"
+                        strokeDasharray={`${(techCount / totalUsers) * 439.82} ${439.82}`}
+                        strokeDashoffset={`${-(standardCount / totalUsers) * 439.82}`}
+                        transform="rotate(-90 100 100)"
+                        strokeLinecap="round"
+                        className="cursor-pointer transition-all duration-300 hover:stroke-[25px]"
+                        onMouseEnter={() => setHoveredRole({ label: "Technicians", count: techCount })}
+                        onMouseLeave={() => setHoveredRole(null)}
+                      />
+                      {/* Admins */}
+                      <circle
+                        cx="100" cy="100" r="70" fill="none" stroke="#1e1b4b" strokeWidth="20"
+                        strokeDasharray={`${(adminCount / totalUsers) * 439.82} ${439.82}`}
+                        strokeDashoffset={`${-((standardCount + techCount) / totalUsers) * 439.82}`}
+                        transform="rotate(-90 100 100)"
+                        strokeLinecap="round"
+                        className="cursor-pointer transition-all duration-300 hover:stroke-[25px]"
+                        onMouseEnter={() => setHoveredRole({ label: "Admins", count: adminCount })}
+                        onMouseLeave={() => setHoveredRole(null)}
+                      />
+                      <text x="100" y="95" textAnchor="middle" fill="#1e293b" fontSize="28" fontWeight="800" className="transition-all duration-300">
+                        {hoveredRole ? hoveredRole.count : totalUsers}
+                      </text>
+                      <text x="100" y="115" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="600" className="transition-all duration-300 tracking-wider">
+                        {hoveredRole ? hoveredRole.label.toUpperCase() : "TOTAL"}
+                      </text>
                     </svg>
                     <div className="flex items-center justify-center gap-5 mt-6">
                       <div className="flex items-center gap-2"><div className="h-3 w-3 rounded-full bg-emerald-500" /><span className="text-xs font-bold text-slate-600">Students</span></div>
