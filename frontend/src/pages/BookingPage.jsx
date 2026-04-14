@@ -70,6 +70,28 @@ const BookingPage = () => {
       setIsSubmitting(false);
       return;
     }
+
+    const today = new Date();
+    const bookingDate = new Date(formData.bookingDate);
+    const todayStr = today.toISOString().split('T')[0];
+    
+    if (formData.bookingDate < todayStr) {
+      setError("invalid: booking date cannot be in the past");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (formData.bookingDate === todayStr) {
+      const currentTime = today.getHours() * 60 + today.getMinutes();
+      const [bHours, bMins] = formData.bookingTime.split(':').map(Number);
+      const bookingTime = bHours * 60 + bMins;
+      
+      if (bookingTime <= currentTime) {
+        setError("invalid time");
+        setIsSubmitting(false);
+        return;
+      }
+    }
     
     try {
       const payload = {
@@ -255,6 +277,7 @@ const BookingPage = () => {
                       type="date"
                       name="bookingDate"
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.bookingDate}
                       onChange={handleChange}
                       style={{ color: "black" }}

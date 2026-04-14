@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface BookingRepository extends MongoRepository<Booking, String> {
     List<Booking> findByUserEmail(String userEmail);
+    List<Booking> findByBookingDateLessThanEqualAndSeatsDeductedFalse(String date);
 }

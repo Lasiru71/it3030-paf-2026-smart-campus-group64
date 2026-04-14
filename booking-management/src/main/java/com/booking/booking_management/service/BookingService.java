@@ -7,6 +7,9 @@ import com.booking.booking_management.repository.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class BookingService {
@@ -42,11 +45,47 @@ public class BookingService {
             throw new IllegalArgumentException("invalid: duration minutes cannot be greater than 59");
         }
 
-        // Auto-deduct seats
-        int newSpaces = resource.getAvailableSpaces() - booking.getMembers();
-        resource.setAvailableSpaces(newSpaces);
-        if (newSpaces == 0) resource.setStatus("Booked");
-        resourceRepository.save(resource);
+        // Validate date and time
+        try {
+            LocalDate bDate = LocalDate.parse(booking.getBookingDate());
+            LocalTime bTime = LocalTime.parse(booking.getBookingTime());
+            LocalDate today = LocalDate.now();
+            LocalTime now = LocalTime.now();
+
+            if (bDate.isBefore(today)) {
+                throw new IllegalArgumentException("invalid: booking date cannot be in the past");
+            }
+
+            if (bDate.equals(today) && !bTime.isAfter(now)) {
+                throw new IllegalArgumentException("invalid time");
+            }
+        } catch (Exception e) {
+            if (e instanceof IllegalArgumentException) throw e;
+            throw new IllegalArgumentException("invalid: date or time format is incorrect");
+        }
+
+        // Automated seat deduction logic
+        try {
+            LocalDate bDate = LocalDate.parse(booking.getBookingDate());
+            if (bDate.equals(LocalDate.now())) {
+                // Deduct seats immediately if booking is for today
+                int newSpaces = resource.getAvailableSpaces() - booking.getMembers();
+                resource.setAvailableSpaces(newSpaces);
+                if (newSpaces == 0) resource.setStatus("Booked");
+                resourceRepository.save(resource);
+                booking.setSeatsDeducted(true);
+            } else {
+                // Do not deduct seats for future bookings yet
+                booking.setSeatsDeducted(false);
+            }
+        } catch (Exception e) {
+            // Fallback: if date parsing fails, just deduct (though previous validation should catch this)
+            int newSpaces = resource.getAvailableSpaces() - booking.getMembers();
+            resource.setAvailableSpaces(newSpaces);
+            if (newSpaces == 0) resource.setStatus("Booked");
+            resourceRepository.save(resource);
+            booking.setSeatsDeducted(true);
+        }
 
         return bookingRepository.save(booking);
     }
@@ -58,13 +97,16 @@ public class BookingService {
             
             // If rejected, restore seats
             if ("REJECTED".equals(status) && !"REJECTED".equals(oldStatus)) {
-                resourceRepository.findById(booking.getResourceId()).ifPresent(res -> {
-                    res.setAvailableSpaces(res.getAvailableSpaces() + booking.getMembers());
-                    if (res.getAvailableSpaces() > 0 && "Booked".equals(res.getStatus())) {
-                        res.setStatus("Available");
-                    }
-                    resourceRepository.save(res);
-                });
+                if (booking.isSeatsDeducted()) {
+                    resourceRepository.findById(booking.getResourceId()).ifPresent(res -> {
+                        res.setAvailableSpaces(res.getAvailableSpaces() + booking.getMembers());
+                        if (res.getAvailableSpaces() > 0 && "Booked".equals(res.getStatus())) {
+                            res.setStatus("Available");
+                        }
+                        resourceRepository.save(res);
+                    });
+                    booking.setSeatsDeducted(false);
+                }
             }
             
             return bookingRepository.save(booking);
@@ -73,8 +115,8 @@ public class BookingService {
 
     public void deleteBooking(String id) {
         bookingRepository.findById(id).ifPresent(booking -> {
-            // Restore seats on deletion if it wasn't already rejected
-            if (!"REJECTED".equals(booking.getStatus())) {
+            // Restore seats on deletion if they were deducted and it wasn't already rejected
+            if (booking.isSeatsDeducted() && !"REJECTED".equals(booking.getStatus())) {
                 resourceRepository.findById(booking.getResourceId()).ifPresent(res -> {
                     res.setAvailableSpaces(res.getAvailableSpaces() + booking.getMembers());
                     if (res.getAvailableSpaces() > 0 && "Booked".equals(res.getStatus())) {
