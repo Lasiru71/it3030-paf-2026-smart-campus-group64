@@ -26,13 +26,27 @@ public class BookingService {
             booking.setStatus("PENDING");
         }
         
+        // Fetch resource and validate capacity
+        Resource resource = resourceRepository.findById(booking.getResourceId())
+                .orElseThrow(() -> new RuntimeException("Resource not found"));
+
+        if (booking.getMembers() > resource.getAvailableSpaces()) {
+            throw new IllegalArgumentException("invalid: cannot exceed available seats");
+        }
+
+        if (booking.getDurationHours() >= 10) {
+            throw new IllegalArgumentException("invalid: duration hours must be less than 10");
+        }
+
+        if (booking.getDurationMinutes() > 59) {
+            throw new IllegalArgumentException("invalid: duration minutes cannot be greater than 59");
+        }
+
         // Auto-deduct seats
-        resourceRepository.findById(booking.getResourceId()).ifPresent(res -> {
-            int newSpaces = Math.max(0, res.getAvailableSpaces() - booking.getMembers());
-            res.setAvailableSpaces(newSpaces);
-            if (newSpaces == 0) res.setStatus("Booked");
-            resourceRepository.save(res);
-        });
+        int newSpaces = resource.getAvailableSpaces() - booking.getMembers();
+        resource.setAvailableSpaces(newSpaces);
+        if (newSpaces == 0) resource.setStatus("Booked");
+        resourceRepository.save(resource);
 
         return bookingRepository.save(booking);
     }

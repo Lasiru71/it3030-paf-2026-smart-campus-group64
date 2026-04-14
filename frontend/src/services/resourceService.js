@@ -14,5 +14,10 @@ export const resourceService = {
   updateResourceStatus: async (id, status) => {
     const response = await axiosInstance.patch(`/api/resources/${id}`, { status });
     return response.data;
+  },
+
+  getResourceById: async (id) => {
+    const response = await axiosInstance.get(`/api/resources/${id}`);
+    return response.data;
   }
 };
