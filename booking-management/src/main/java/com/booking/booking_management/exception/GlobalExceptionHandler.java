@@ -37,6 +37,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApiResponse(false, errorMessage), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse> handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex) {
+        return new ResponseEntity<>(new ApiResponse(false, "Access Denied: You do not have permission to perform this action"), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGlobalException(Exception ex) {
         return new ResponseEntity<>(new ApiResponse(false, "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -17,19 +17,19 @@ public class BookingController {
     private BookingService bookingService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'TECHNICIAN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'TECHNICIAN', 'STAFF')")
     public List<Booking> getAllBookings() {
         return bookingService.getAllBookings();
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STAFF')")
     public Booking createBooking(@RequestBody Booking booking) {
         return bookingService.createBooking(booking);
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('USER', 'TECHNICIAN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'TECHNICIAN', 'ADMIN', 'STAFF')")
     public Booking updateBookingStatus(@PathVariable String id, @RequestBody Map<String, String> statusUpdate) {
         String status = statusUpdate.get("status");
         System.out.println(">>> REQUEST ARRIVED: updateBookingStatus for ID=" + id + " Status=" + status);
@@ -49,7 +49,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}/message")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STAFF')")
     public Booking updateBookingMessage(@PathVariable String id, @RequestBody Map<String, String> messageUpdate) {
         return bookingService.updateBookingMessage(id, messageUpdate.get("message"));
     }
