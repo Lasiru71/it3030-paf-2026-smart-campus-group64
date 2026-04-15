@@ -111,15 +111,18 @@ export default function StudentDashboardPage() {
       >
         {/* Brand */}
         <div className="px-6 pt-7 pb-5 border-b border-white/[0.07]">
-          <div className="flex items-center gap-3">
+          <div 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-3 cursor-pointer group transition-all"
+          >
             <div
-              className="h-10 w-10 rounded-2xl flex items-center justify-center shadow-xl"
+              className="h-10 w-10 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-emerald-500/20 transition-all border border-white/5"
               style={{ background: "linear-gradient(135deg,#10b981,#059669)" }}
             >
-              <Shield className="h-5 w-5 text-white" />
+              <Shield className="h-5 w-5 text-white group-hover:scale-110 transition-transform" />
             </div>
             <div>
-              <p className="text-white font-black text-sm tracking-tight leading-none">CampusReserve</p>
+              <p className="text-white font-black text-sm tracking-tight leading-none group-hover:text-emerald-400 transition-colors">CampusReserve</p>
               <p className="text-slate-500 text-[9px] mt-1 font-bold uppercase tracking-[0.18em]">Student Console</p>
             </div>
           </div>
