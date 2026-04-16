@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { facilityService } from "../services/facilityService";
 import MainLayout from "../components/layout/MainLayout";
 import { 
   Search, 
@@ -11,7 +12,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button";
-import { resourceService } from "../services/resourceService";
+
+// Resources are now fetched from facilityService
 
 const categories = ["All", "L Halls", "Labs", "Meeting", "Common"];
 
@@ -19,19 +21,9 @@ const ResourcesPage = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [resources, setResources] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    resourceService.getAllResources()
-      .then(data => {
-        setResources(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+    setResources(facilityService.getAll());
   }, []);
 
   const filteredResources = resources.filter(res => {
