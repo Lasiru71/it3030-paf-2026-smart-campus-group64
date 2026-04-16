@@ -8,15 +8,12 @@ import {
   Trash2, Edit, LogOut, Bell, Search, TrendingUp, Filter,
   Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3,
   Globe, Lock, Palette, Server, Mail, Smartphone, Moon, Sun, Database, RefreshCw, Save, Download,
-  FileText, LayoutGrid
-  FileText, Plus, Minus, MessageSquare, CalendarDays
+  FileText, LayoutGrid, Plus, Minus, MessageSquare, CalendarDays
 } from "lucide-react";
 import { ROUTES } from "../utils/constants";
 import { bookingService } from "../services/bookingService";
 import { resourceService } from "../services/resourceService";
 import axiosInstance from "../services/axiosInstance";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import FacilitiesManagement from "../components/FacilitiesManagement";
 
 const stats = [
