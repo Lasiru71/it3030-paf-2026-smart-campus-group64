@@ -69,7 +69,6 @@ const navSections = [
     header: "ACADEMIC", items: [
       { icon: LayoutGrid, label: "Facilities" },
       { icon: BookOpen, label: "Bookings" },
-      { icon: BookOpen, label: "Bookings" },
       { icon: MessageSquare, label: "Message Box" },
       { icon: Database, label: "Space Management" },
       { icon: Smartphone, label: "Individual Bookings" }

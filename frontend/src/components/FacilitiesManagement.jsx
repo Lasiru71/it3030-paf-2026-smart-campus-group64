@@ -63,7 +63,11 @@ export default function FacilitiesManagement() {
   const [facilities, setFacilities] = useState([]);
 
   useEffect(() => {
-    setFacilities(facilityService.getAll());
+    const fetchFacilities = async () => {
+      const data = await facilityService.getAll();
+      setFacilities(data);
+    };
+    fetchFacilities();
   }, []);
   
   // Form State
@@ -80,10 +84,10 @@ export default function FacilitiesManagement() {
   });
 
   const stats = [
-    { label: "Total Facilities", value: "12", icon: Building2, color: "bg-blue-600" },
-    { label: "Available", value: "8", icon: CheckCircle2, color: "bg-emerald-600" },
-    { label: "Occupied", value: "4", icon: AlertCircle, color: "bg-orange-500" },
-    { label: "Under Maintenance", value: "1", icon: Hammer, color: "bg-red-500" },
+    { label: "Total Facilities", value: facilities.length.toString(), icon: Building2, color: "bg-blue-600" },
+    { label: "Available", value: facilities.filter(f => f.status === "Available").length.toString(), icon: CheckCircle2, color: "bg-emerald-600" },
+    { label: "Occupied", value: facilities.filter(f => f.status === "Booked").length.toString(), icon: AlertCircle, color: "bg-orange-500" },
+    { label: "Under Maintenance", value: facilities.filter(f => f.status === "Maintenance").length.toString(), icon: Hammer, color: "bg-red-500" },
   ];
 
   const handleEdit = (facility) => {
@@ -127,18 +131,34 @@ export default function FacilitiesManagement() {
 
     const updatedFacility = {
       ...formData,
+      location: `${formData.block}, ${formData.level}`,
+      capacity: parseInt(formData.capacity) || 0,
       status: formData.status === "Active" ? "Available" : (formData.status === "Maintenance" ? "Maintenance" : "Booked")
     };
 
-    const newFacilities = facilityService.save(updatedFacility);
-    setFacilities(newFacilities);
-    setView("dashboard");
+    const performSave = async () => {
+      try {
+        await facilityService.save(updatedFacility);
+        const freshData = await facilityService.getAll();
+        setFacilities(freshData);
+        setView("dashboard");
+      } catch (err) {
+        alert("Failed to save facility. Please check backend connection.");
+      }
+    };
+    
+    performSave();
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this facility? This action cannot be undone.")) {
-      const newFacilities = facilityService.delete(id);
-      setFacilities(newFacilities);
+      try {
+        await facilityService.delete(id);
+        const freshData = await facilityService.getAll();
+        setFacilities(freshData);
+      } catch (err) {
+        alert("Failed to delete facility.");
+      }
     }
   };
 
