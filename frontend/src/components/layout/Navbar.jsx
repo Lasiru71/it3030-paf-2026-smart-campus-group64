@@ -20,6 +20,7 @@ const authLinks = [
   { label: "My Bookings", to: ROUTES.MY_BOOKINGS },
   { label: "About", to: ROUTES.ABOUT },
   { label: "Contact", to: ROUTES.CONTACT },
+  { label: "Make a Ticket", to: ROUTES.MAKE_TICKET },
 ];
 
 const Navbar = () => {

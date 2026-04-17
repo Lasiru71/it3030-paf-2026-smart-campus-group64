@@ -9,6 +9,7 @@ import ResourcesPage from "../pages/ResourcesPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
 import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
+import MakeTicketPage from "../pages/MakeTicketPage";
 
 const AppRouter = () => {
   return (
@@ -21,6 +22,7 @@ const AppRouter = () => {
         <Route path={ROUTES.MY_BOOKINGS} element={<MyBookingsPage />} />
         <Route path={ROUTES.ABOUT} element={<AboutPage />} />
         <Route path={ROUTES.CONTACT} element={<ContactPage />} />
+        <Route path={ROUTES.MAKE_TICKET} element={<MakeTicketPage />} />
         {/* Fallback — redirect unknown routes to home */}
         <Route path="*" element={<HomePage />} />
       </Routes>

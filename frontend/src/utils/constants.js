@@ -14,4 +14,5 @@ export const ROUTES = {
   MY_BOOKINGS: "/my-bookings",
   ABOUT: "/about",
   CONTACT: "/contact",
+  MAKE_TICKET: "/make-ticket",
 };
