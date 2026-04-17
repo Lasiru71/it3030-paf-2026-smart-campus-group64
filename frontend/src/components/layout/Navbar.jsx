@@ -9,7 +9,7 @@ import { ROUTES } from "../../utils/constants";
 
 const guestLinks = [
   { label: "Home", to: ROUTES.HOME },
-  { label: "Resources", to: ROUTES.RESOURCES },
+  { label: "Facilities & Resources", to: ROUTES.RESOURCES },
   { label: "About", to: ROUTES.ABOUT },
   { label: "Contact", to: ROUTES.CONTACT },
 ];
@@ -35,7 +35,7 @@ const Navbar = () => {
   // Build nav links based on role
   const authLinks = [
     { label: "Home", to: ROUTES.HOME },
-    { label: "Resources", to: ROUTES.RESOURCES },
+    { label: "Facilities & Resources", to: ROUTES.RESOURCES },
     // Role-specific links
     ...(isAdmin ? [{ label: "Admin Dashboard", to: ROUTES.ADMIN_DASHBOARD }] : []),
     ...(isTechnician ? [{ label: "Technician Portal", to: ROUTES.TECHNICIAN_DASHBOARD }] : []),

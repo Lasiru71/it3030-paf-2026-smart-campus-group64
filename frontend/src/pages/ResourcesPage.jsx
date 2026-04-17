@@ -15,7 +15,11 @@ import Button from "../components/common/Button";
 
 // Resources are now fetched from facilityService
 
-const categories = ["All", "L Halls", "Labs", "Meeting", "Common"];
+const categories = [
+  "All", 
+  "L Halls", "Labs", "Meeting", "Common",
+  "Equipment", "Electronics", "Audio/Visual", "Furniture"
+];
 
 const ResourcesPage = () => {
   const navigate = useNavigate();
