@@ -534,36 +534,63 @@ export default function FacilitiesManagement() {
           {viewMode === "grid" ? (
              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                {currentItems.filter(f => f.name.toLowerCase().includes(search.toLowerCase())).map(f => (
-                 <div key={f.id} className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-1">
-                   <div className="h-2 w-full bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <div className="p-8">
-                      <div className="flex justify-between items-start mb-6">
-                        <div className="h-12 w-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-colors">
-                          <Building2 className="h-6 w-6" />
+                 <div key={f.id} className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-400 overflow-hidden relative">
+                   <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                   
+                   <div className="p-5 sm:p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex gap-4 items-center flex-1">
+                          {/* Image Container - properly sized and styled */}
+                          <div className="h-24 w-28 sm:h-28 sm:w-32 flex-shrink-0 flex items-center justify-center bg-slate-100 rounded-2xl group-hover:bg-slate-200 transition-colors overflow-hidden relative shadow-sm">
+                            {f.image ? (
+                              <img src={f.image} alt={f.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            ) : (
+                               <Building2 className="h-10 w-10 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                            )}
+                          </div>
+                          
+                          {/* Title and Category */}
+                          <div className="flex-1 min-w-0 pr-2">
+                            <h4 className="text-lg font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors truncate" title={f.name}>
+                              {f.name}
+                            </h4>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5">{f.category}</p>
+                          </div>
                         </div>
-                        <div className={`px-4 py-1.5 rounded-full border text-[10px] font-black flex items-center gap-2 ${statusStyles[f.status]}`}>
+                        
+                        {/* ID / Small icon indicator top right */}
+                        <div className="h-8 w-8 bg-slate-50 flex items-center justify-center rounded-xl text-slate-400 shrink-0">
+                           <LayoutGrid className="h-4 w-4" />
+                        </div>
+                      </div>
+                      
+                      {/* Details row: Quantity/Capacity & Status */}
+                      <div className="flex items-center justify-between mt-3 mb-4 pt-4 border-t border-slate-50 border-dashed">
+                        <div className="flex items-center gap-2 text-slate-600">
+                          {activeTab === "Facilities" ? (
+                             <><Users className="h-4 w-4 opacity-50" /> <span className="text-sm font-bold">Capacity: {f.capacity}</span></>
+                          ) : (
+                             <><Database className="h-4 w-4 opacity-50" /> <span className="text-sm font-bold">Quantity: {f.capacity}</span></>
+                          )}
+                        </div>
+                        <div className={`px-3 py-1.5 rounded-full border text-[9px] font-black flex items-center gap-1.5 ${statusStyles[f.status]}`}>
                           {statusIcons[f.status]} {f.status.toUpperCase()}
                         </div>
                       </div>
-                      <h4 className="text-xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors truncate">{f.name}</h4>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 mb-6">{f.category}</p>
-                      
-                      <div className="space-y-4 mb-8">
-                        <div className="flex items-center gap-3 text-slate-600">
-                          <MapPin className="h-4 w-4 opacity-40" /> <span className="text-sm font-semibold">{f.location}</span>
-                        </div>
-                        {activeTab === "Facilities" && (
-                          <div className="flex items-center gap-3 text-slate-600">
-                            <Users className="h-4 w-4 opacity-40" /> <span className="text-sm font-semibold">Capacity: {f.capacity}</span>
-                          </div>
-                        )}
-                      </div>
 
-                      <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-                         <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">UID: {activeTab === "Facilities" ? "FAC" : "RES"}-0{f.id}</span>
-                         <div className="flex gap-2">
-                            <button onClick={() => handleEdit(f)} className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"><Edit className="h-5 w-5"/></button>
-                            <button onClick={() => handleDelete(f.id)} className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"><Trash2 className="h-5 w-5"/></button>
+                      {/* Location & Actions */}
+                      <div className="pt-2 flex items-center justify-between">
+                         <div className="flex items-center gap-2 text-slate-500">
+                           <MapPin className="h-4 w-4 opacity-50 text-blue-500" />
+                           <span className="text-xs font-bold">{f.location}</span>
+                         </div>
+                         <div className="flex gap-1.5">
+                            <button onClick={() => handleEdit(f)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Edit">
+                              <Edit className="h-4 w-4"/>
+                            </button>
+                            <button onClick={() => handleDelete(f.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all" title="Delete">
+                              <Trash2 className="h-4 w-4"/>
+                            </button>
                          </div>
                       </div>
                    </div>
