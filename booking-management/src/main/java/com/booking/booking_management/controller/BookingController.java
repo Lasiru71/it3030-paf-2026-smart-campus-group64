@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.lang.NonNull;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -30,7 +31,7 @@ public class BookingController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('USER', 'TECHNICIAN', 'ADMIN', 'STAFF')")
-    public Booking updateBookingStatus(@PathVariable String id, @RequestBody Map<String, String> update) {
+    public Booking updateBookingStatus(@PathVariable @NonNull String id, @RequestBody Map<String, String> update) {
         String status = update.get("status");
         String locationSuggestions = update.get("locationSuggestions");
         String adminNote = update.get("adminNote");
@@ -45,20 +46,20 @@ public class BookingController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String deleteBooking(@PathVariable String id) {
+    public String deleteBooking(@PathVariable @NonNull String id) {
         bookingService.deleteBooking(id);
         return "Booking " + id + " deleted by Administrator.";
     }
 
     @PatchMapping("/{id}/message")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STAFF')")
-    public Booking updateBookingMessage(@PathVariable String id, @RequestBody Map<String, String> messageUpdate) {
+    public Booking updateBookingMessage(@PathVariable @NonNull String id, @RequestBody Map<String, String> messageUpdate) {
         return bookingService.updateBookingMessage(id, messageUpdate.get("message"));
     }
 
     @PatchMapping("/{id}/selection")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'STAFF')")
-    public Booking updateStudentSelection(@PathVariable String id, @RequestBody Map<String, String> selectionUpdate) {
+    public Booking updateStudentSelection(@PathVariable @NonNull String id, @RequestBody Map<String, String> selectionUpdate) {
         return bookingService.updateStudentSelection(id, selectionUpdate.get("selection"));
     }
 }

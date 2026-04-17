@@ -4,6 +4,7 @@ import com.booking.booking_management.model.User;
 import com.booking.booking_management.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable @NonNull String id) {
         if (!userRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<User> toggleUserStatus(@PathVariable String id) {
+    public ResponseEntity<User> toggleUserStatus(@PathVariable @NonNull String id) {
         return userRepository.findById(id).map(user -> {
             String currentStatus = user.getStatus();
             user.setStatus(currentStatus.equals("Active") ? "Inactive" : "Active");

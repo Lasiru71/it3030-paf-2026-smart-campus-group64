@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.springframework.lang.NonNull;
 
 @Service
 public class BookingService {
@@ -99,7 +100,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    public Booking updateBookingStatus(String id, String status, String locationSuggestions, String adminNote) {
+    public Booking updateBookingStatus(@NonNull String id, String status, String locationSuggestions, String adminNote) {
         return bookingRepository.findById(id).map(booking -> {
             String oldStatus = booking.getStatus();
             System.out.println("DEBUG: Transitioning booking " + id + " from " + oldStatus + " to " + status);
@@ -131,7 +132,7 @@ public class BookingService {
         }).orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
-    public void deleteBooking(String id) {
+    public void deleteBooking(@NonNull String id) {
         bookingRepository.findById(id).ifPresent(booking -> {
             // Restore seats on deletion if they were deducted and it wasn't already rejected
             if (booking.isSeatsDeducted() && !"REJECTED".equals(booking.getStatus())) {
@@ -147,14 +148,14 @@ public class BookingService {
         });
     }
 
-    public Booking updateBookingMessage(String id, String message) {
+    public Booking updateBookingMessage(@NonNull String id, String message) {
         return bookingRepository.findById(id).map(booking -> {
             booking.setMessage(message);
             return bookingRepository.save(booking);
         }).orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
-    public Booking updateStudentSelection(String id, String selection) {
+    public Booking updateStudentSelection(@NonNull String id, String selection) {
         return bookingRepository.findById(id).map(booking -> {
             booking.setStudentSelection(selection);
             return bookingRepository.save(booking);

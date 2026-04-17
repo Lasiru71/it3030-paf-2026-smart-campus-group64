@@ -26,7 +26,9 @@ import {
   Layers,
   Bell,
   MoreHorizontal,
-  ChevronLeft
+  ChevronLeft,
+  Image as ImageIcon,
+  UploadCloud
 } from "lucide-react";
 import { facilityService } from "../services/facilityService";
 
@@ -47,18 +49,10 @@ const statusIcons = {
   Other: <MoreHorizontal className="h-3.5 w-3.5" />,
 };
 
-const statusThemes = {
-  Available: { color: "emerald", icon: CheckCircle2, dot: "bg-emerald-500" },
-  Occupied: { color: "orange", icon: Clock, dot: "bg-orange-400" },
-  Maintenance: { color: "red", icon: AlertCircle, dot: "bg-red-500" },
-  Other: { color: "slate", icon: MoreHorizontal, dot: "bg-slate-400" },
-};
-
 export default function FacilitiesManagement() {
   // Views: "dashboard" | "manage"
   const [view, setView] = useState("dashboard");
   const [activeTab, setActiveTab] = useState("Facilities"); // "Facilities" | "Resources"
-  const facilitiesCategories = ["L Halls", "Labs", "Meeting", "Common"];
   const resourcesCategories = ["Equipment", "Electronics", "Audio/Visual", "Furniture"];
 
   const [viewMode, setViewMode] = useState("grid");
@@ -83,7 +77,8 @@ export default function FacilitiesManagement() {
     capacity: "",
     status: "Active",
     startTime: "08:00 AM",
-    endTime: "06:00 PM"
+    endTime: "06:00 PM",
+    image: ""
   });
 
   const currentItems = facilities.filter(f => {
@@ -107,7 +102,8 @@ export default function FacilitiesManagement() {
       level: facility.location?.split(',')[1]?.trim() || "Level 1",
       status: facility.status === "Available" ? "Active" : (facility.status === "Maintenance" ? "Maintenance" : "Out of Service"),
       startTime: "08:00 AM",
-      endTime: "06:00 PM"
+      endTime: "06:00 PM",
+      image: facility.image || ""
     });
     setView("manage");
   };
@@ -122,7 +118,8 @@ export default function FacilitiesManagement() {
       capacity: "", 
       status: "Active", 
       startTime: "08:00 AM", 
-      endTime: "06:00 PM" 
+      endTime: "06:00 PM",
+      image: ""
     });
     setView("manage");
   };
@@ -162,7 +159,7 @@ export default function FacilitiesManagement() {
         const freshData = await facilityService.getAll();
         setFacilities(freshData);
         setView("dashboard");
-      } catch (err) {
+      } catch {
         alert("Failed to save facility. Please check backend connection.");
       }
     };
@@ -176,8 +173,24 @@ export default function FacilitiesManagement() {
         await facilityService.delete(id);
         const freshData = await facilityService.getAll();
         setFacilities(freshData);
-      } catch (err) {
+      } catch {
         alert("Failed to delete facility.");
+      }
+    }
+  };
+
+  const handleImagePaste = (e) => {
+    const items = (e.clipboardData || window.clipboardData).items;
+    for (let index in items) {
+      const item = items[index];
+      if (item.kind === 'file' && item.type.includes('image/')) {
+        const file = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setFormData(prev => ({ ...prev, image: event.target.result }));
+        };
+        reader.readAsDataURL(file);
+        break; // Only take the first image
       }
     }
   };
@@ -359,8 +372,50 @@ export default function FacilitiesManagement() {
                    </div>
                 </div>
 
+                {/* Image Upload/Paste Section */}
+                <div className="space-y-4 pt-8 border-t border-slate-100">
+                  <label className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <ImageIcon className="h-4 w-4 text-blue-500" />
+                    Resource Image
+                  </label>
+                  <p className="text-xs text-slate-500 mb-2">Click below and press <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-slate-600 font-mono text-[10px]">Ctrl+V</kbd> (or <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-slate-600 font-mono text-[10px]">Cmd+V</kbd>) to paste an image.</p>
+                  
+                  <div 
+                    tabIndex={0}
+                    onPaste={handleImagePaste}
+                    className={`relative border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all ${
+                      formData.image ? 'border-blue-300 bg-blue-50/30' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'
+                    } focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10`}
+                  >
+                    {formData.image ? (
+                      <div className="relative w-full max-w-sm">
+                        <img 
+                          src={formData.image} 
+                          alt="Preview" 
+                          className="w-full h-auto max-h-48 object-contain rounded-xl shadow-md border border-slate-200 bg-white"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setFormData({...formData, image: ""}) }}
+                          className="absolute -top-3 -right-3 bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors z-10"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center group pointer-events-none">
+                        <div className="h-14 w-14 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto mb-4 text-blue-500 group-hover:scale-110 transition-transform border border-slate-100">
+                          <UploadCloud className="h-6 w-6" />
+                        </div>
+                        <p className="text-sm font-bold text-slate-700">Paste Image Here</p>
+                        <p className="text-xs text-slate-500 mt-1">Focus this box and paste</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Status Selection (Horizontal Group) */}
-                <div className="space-y-4 pt-4">
+                <div className="space-y-4 pt-8 border-t border-slate-100">
                   <label className="text-sm font-bold text-slate-800">Status</label>
                   <div className="flex flex-wrap gap-4">
                      {[

@@ -93,7 +93,6 @@ const BookingPage = () => {
     }
 
     const today = new Date();
-    const bookingDate = new Date(formData.bookingDate);
     // Use local date instead of UTC to avoid timezone mismatches
     const todayStr = today.getFullYear() + '-' + 
                     String(today.getMonth() + 1).padStart(2, '0') + '-' + 

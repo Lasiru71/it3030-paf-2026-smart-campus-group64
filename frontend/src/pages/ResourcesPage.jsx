@@ -18,6 +18,7 @@ import Button from "../components/common/Button";
 const categories = ["All", "L Halls", "Labs", "Meeting", "Common"];
 
 const ResourcesPage = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [resources, setResources] = useState([]);

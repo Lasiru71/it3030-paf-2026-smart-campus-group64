@@ -56,11 +56,6 @@ const roleStyle = {
   TECHNICIAN: "bg-amber-100  text-amber-700  border border-amber-200",
   USER: "bg-sky-100    text-sky-700    border border-sky-200",
 };
-const avatarGradient = {
-  ADMIN: "from-violet-500 to-purple-700",
-  TECHNICIAN: "from-amber-400 to-orange-500",
-  USER: "from-sky-400 to-blue-600",
-};
 
 const navSections = [
   { header: "MAIN", items: [{ icon: Home, label: "Overview" }] },
@@ -99,8 +94,32 @@ function Toggle({ checked, onChange }) {
   );
 }
 
+// ─── Settings Panel Helpers ────────────────────────────────────
+const Field = ({ label, value, onChange, type = "text" }) => (
+  <div>
+    <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">{label}</label>
+    <input
+      type={type} value={value} onChange={(e) => onChange(e.target.value)}
+      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition shadow-sm"
+    />
+  </div>
+);
+
+const Row = ({ label, sub, icon, iconBg, control }) => (
+  <div className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
+    <div className="flex items-center gap-3 pr-4">
+      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>{icon}</div>
+      <div>
+        <p className="text-sm font-bold text-slate-800">{label}</p>
+        {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+      </div>
+    </div>
+    {control}
+  </div>
+);
+
 // ─── Settings Panel ──────────────────────────────────────────
-function SettingsPanel({ displayName }) {
+function SettingsPanel() {
   const [notifs, setNotifs] = useState({ email: true, sms: false, push: true, booking: true, security: true });
   const [security, setSecurity] = useState({ twoFa: false, sessionTimeout: "30", loginAlerts: true });
   const [general, setGeneral] = useState({ siteName: "CampusReserve", email: "admin@campusreserve.edu", phone: "+94 11 234 5678" });
@@ -123,29 +142,6 @@ function SettingsPanel({ displayName }) {
   }, [appearance.theme]);
 
   const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 3000); };
-
-  const Field = ({ label, value, onChange, type = "text" }) => (
-    <div>
-      <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">{label}</label>
-      <input
-        type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition shadow-sm"
-      />
-    </div>
-  );
-
-  const Row = ({ label, sub, icon, iconBg, control }) => (
-    <div className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0">
-      <div className="flex items-center gap-3 pr-4">
-        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>{icon}</div>
-        <div>
-          <p className="text-sm font-bold text-slate-800">{label}</p>
-          {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
-        </div>
-      </div>
-      {control}
-    </div>
-  );
 
   return (
     <main className="flex-1 overflow-y-auto bg-slate-50">
@@ -1325,13 +1321,6 @@ export default function AdminDashboardPage() {
   const techCount = users.filter((u) => u.role === "TECHNICIAN").length;
   const standardCount = users.filter((u) => u.role === "USER" || u.role === "STUDENT").length;
   const totalUsers = users.length || 1;
-
-  const adminPct = `${Math.round((adminCount / totalUsers) * 100)}%`;
-  const techPct = `${Math.round((techCount / totalUsers) * 100)}%`;
-  const userPct = `${Math.round((standardCount / totalUsers) * 100)}%`;
-
-  // Provide realistic top card metrics based on user table size
-  stats[0].value = users.length.toString();
 
   useEffect(() => {
     axiosInstance.get("/api/users")

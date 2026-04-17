@@ -9,7 +9,6 @@ import {
   MapPin, Plus, ArrowRight, XCircle, Layers, Globe, Zap, AlertCircle
 } from "lucide-react";
 import { ROUTES } from "../utils/constants";
-import axiosInstance from "../services/axiosInstance";
 
 // ─── Constants & Styles ───────────────────────────────────────
 
@@ -66,7 +65,7 @@ export default function StudentDashboardPage() {
   const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("Overview");
   const [search, setSearch] = useState("");
-  const [bookings, setBookings] = useState(SAMPLE_BOOKINGS);
+  const [bookings] = useState(SAMPLE_BOOKINGS);
 
   const displayName = auth?.fullName || auth?.email || "Student";
   const avatarSrc = localStorage.getItem("student_avatar");

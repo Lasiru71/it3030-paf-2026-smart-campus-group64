@@ -3,6 +3,7 @@ package com.booking.booking_management.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import org.springframework.lang.NonNull;
 
 @Document(collection = "bookings")
 public class Booking {
@@ -29,7 +30,8 @@ public class Booking {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getResourceId() { return resourceId; }
+    @NonNull
+    public String getResourceId() { return resourceId == null ? "" : resourceId; }
     public void setResourceId(String resourceId) { this.resourceId = resourceId; }
 
     public String getResourceName() { return resourceName; }
