@@ -47,4 +47,9 @@ public class NotificationController {
         notificationService.deleteNotification(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> getNotificationStats() {
+        return ResponseEntity.ok(notificationService.getNotificationStats());
+    }
 }

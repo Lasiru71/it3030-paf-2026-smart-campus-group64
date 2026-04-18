@@ -46,4 +46,14 @@ public class NotificationService {
     public void deleteNotification(String id) {
         notificationRepository.deleteById(id);
     }
+
+    public java.util.Map<String, Object> getNotificationStats() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("total", notificationRepository.count());
+        stats.put("read", notificationRepository.countByRead(true));
+        stats.put("unread", notificationRepository.countByRead(false));
+        stats.put("bookingCount", notificationRepository.countByType("BOOKING"));
+        stats.put("ticketCount", notificationRepository.countByType("TICKET"));
+        return stats;
+    }
 }

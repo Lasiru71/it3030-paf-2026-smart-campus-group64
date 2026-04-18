@@ -16,6 +16,7 @@ import { resourceService } from "../services/resourceService";
 import axiosInstance from "../services/axiosInstance";
 import FacilitiesManagement from "../components/FacilitiesManagement";
 import NotificationBell from "../components/layout/NotificationBell";
+import { getNotificationStats } from "../services/notificationService";
 
 const stats = [
   {
@@ -1785,68 +1786,149 @@ export default function AdminDashboardPage() {
 
   const generateBookingPDF = async (customData = null) => {
     setToast("Preparing your report... ⏳");
-    // If we have custom data (from BookingsPanel), use it. Otherwise, fetch fresh data.
-    let bookingsToReport = customData;
+    try {
+      // If called as an event handler, customData will be the event object.
+      // We only want to use it if it's explicitly an array of bookings.
+      let bookingsToReport = Array.isArray(customData) ? customData : null;
 
-    if (!bookingsToReport) {
-      try {
+      if (!bookingsToReport) {
         const response = await bookingService.getAllBookings();
         bookingsToReport = response;
-      } catch (err) {
-        console.error("Report fetch failed", err);
-        setToast("Error: Could not fetch bookings for report.");
-        setTimeout(() => setToast(null), 3000);
-        return;
       }
+
+      // Safeguard: Ensure we have an array
+      if (!Array.isArray(bookingsToReport)) {
+        console.error("Data is not an array:", bookingsToReport);
+        throw new Error("Invalid data format received from server.");
+      }
+
+      const doc = new jsPDF();
+
+      // Header
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 0, 210, 40, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont("helvetica", "bold");
+      doc.text("CampusReserve Booking Report", 105, 20, { align: "center" });
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Generated on ${new Date().toLocaleString()}`, 105, 30, { align: "center" });
+
+      // Overview Section
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Booking Overview", 14, 55);
+
+      // Defensive filtering in case any booking object is null
+      const validBookings = bookingsToReport.filter(b => b !== null && typeof b === 'object');
+      const pendingCount = validBookings.filter(b => b.status === "PENDING" || !b.status).length;
+      const approvedCount = validBookings.filter(b => b.status === "APPROVED").length;
+
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Total Records in Report: ${validBookings.length}`, 14, 65);
+      doc.text(`Pending Approvals: ${pendingCount}`, 14, 72);
+      doc.text(`Approved Bookings: ${approvedCount}`, 14, 79);
+
+      // Table mapping with null-safety
+      const tableBody = validBookings.map((b, i) => [
+        (i + 1).toString(),
+        b.resourceName || "N/A",
+        b.userEmail || "N/A",
+        b.bookingDate || "N/A",
+        b.bookingTime || "N/A",
+        b.status || "PENDING"
+      ]);
+
+      autoTable(doc, {
+        startY: 95,
+        head: [["#", "Facility", "Booked By", "Date", "Time", "Status"]],
+        body: tableBody.length > 0 ? tableBody : [["-", "No records found", "-", "-", "-", "-"]],
+        theme: "grid",
+        headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: "bold" },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        styles: { fontSize: 9 }
+      });
+
+      doc.save(`CampusReserve_Booking_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+      setToast("Booking report downloaded! 📊");
+    } catch (err) {
+      console.error("Report generation failed:", err);
+      setToast(`Error: ${err.message || "Failed to generate booking report."}`);
     }
+    setTimeout(() => setToast(null), 3000);
+  };
 
-    const doc = new jsPDF();
+  const generateNotificationPDF = async () => {
+    setToast("Analyzing notification data... ⏳");
+    try {
+      const { data } = await getNotificationStats();
+      const doc = new jsPDF();
 
-    // Header
-    doc.setFillColor(37, 99, 235);
-    doc.rect(0, 0, 210, 40, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text("CampusReserve Booking Report", 105, 20, { align: "center" });
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Generated on ${new Date().toLocaleString()}`, 105, 30, { align: "center" });
+      // Header
+      doc.setFillColor(59, 130, 246);
+      doc.rect(0, 0, 210, 40, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont("helvetica", "bold");
+      doc.text("Notification Activity Report", 105, 20, { align: "center" });
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Generated on ${new Date().toLocaleString()}`, 105, 30, { align: "center" });
 
-    // Overview Section
-    doc.setTextColor(30, 41, 59);
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("Booking Overview", 14, 55);
+      // Summary Section
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Global Notification Statistics", 14, 55);
 
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Total Records in Report: ${bookingsToReport.length}`, 14, 65);
-    doc.text(`Pending Approvals: ${bookingsToReport.filter(b => b.status === "PENDING" || !b.status).length}`, 14, 72);
-    doc.text(`Approved Bookings: ${bookingsToReport.filter(b => b.status === "APPROVED").length}`, 14, 79);
+      const total = data.total || 0;
+      const read = data.read || 0;
+      const unread = data.unread || 0;
+      const engagement = total > 0 ? ((read / total) * 100).toFixed(1) : "0";
 
-    // Table
-    const tableBody = bookingsToReport.map((b, i) => [
-      (i + 1).toString(),
-      b.resourceName || "N/A",
-      b.userEmail || "N/A",
-      b.bookingDate || "N/A",
-      b.bookingTime || "N/A",
-      b.status || "PENDING"
-    ]);
+      // Stats Table
+      autoTable(doc, {
+        startY: 65,
+        head: [["Metric", "Value", "Description"]],
+        body: [
+          ["Total Sent", total.toString(), "Gross system alerts"],
+          ["Unread Alerts", unread.toString(), "Pending user attention"],
+          ["Read Alerts", read.toString(), "Acknowledged notifications"],
+          ["Engagement Rate", `${engagement}%`, "Read vs Total ratio"]
+        ],
+        theme: "striped",
+        headStyles: { fillColor: [51, 65, 85] }
+      });
 
-    autoTable(doc, {
-      startY: 95,
-      head: [["#", "Facility", "Booked By", "Date", "Time", "Status"]],
-      body: tableBody.length > 0 ? tableBody : [["-", "No records found", "-", "-", "-", "-"]],
-      theme: "grid",
-      headStyles: { fillColor: [79, 70, 229], textColor: [255, 255, 255], fontStyle: "bold" },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-      styles: { fontSize: 9 }
-    });
+      // Type Breakdown
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Category Breakdown", 14, doc.lastAutoTable.finalY + 15);
 
-    doc.save(`CampusReserve_Booking_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-    setToast("Booking report downloaded! 📊");
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 20,
+        head: [["Category", "Count", "Percentage"]],
+        body: [
+          ["Bookings", data.bookingCount?.toString() || "0", total > 0 ? `${((data.bookingCount / total) * 100).toFixed(1)}%` : "0%"],
+          ["Maintenance Tickets", data.ticketCount?.toString() || "0", total > 0 ? `${((data.ticketCount / total) * 100).toFixed(1)}%` : "0%"]
+        ],
+        theme: "grid",
+        headStyles: { fillColor: [59, 130, 246] }
+      });
+
+      doc.setFontSize(10);
+      doc.setTextColor(148, 163, 184);
+      doc.text("End of Notification Activity Report", 105, 280, { align: "center" });
+
+      doc.save("Notification_Activity_Report.pdf");
+      setToast("Notification report generated! 🔔");
+    } catch (err) {
+      console.error("Stats failure", err);
+      setToast("Error: Failed to gather statistics.");
+    }
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -2289,6 +2371,26 @@ export default function AdminDashboardPage() {
                       </div>
                       <button
                         onClick={generateBookingPDF}
+                        className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 active:scale-95 transition-all shadow-md group-hover:shadow-lg"
+                      >
+                        <Download className="h-4 w-4" /> Generate Report
+                      </button>
+                    </div>
+
+                    {/* Notification Report */}
+                    <div className="group bg-white rounded-3xl border border-slate-100 shadow-sm p-7 flex flex-col justify-between hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300">
+                      <div>
+                        <div className="h-12 w-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                          <Bell className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="text-lg font-bold text-slate-800">Alert Activity</h4>
+                          <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider">System</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-8 leading-relaxed">Analysis of system alerts, user engagement rates, and category distribution across the platform notification engine.</p>
+                      </div>
+                      <button
+                        onClick={generateNotificationPDF}
                         className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-slate-900 active:scale-95 transition-all shadow-md group-hover:shadow-lg"
                       >
                         <Download className="h-4 w-4" /> Generate Report
