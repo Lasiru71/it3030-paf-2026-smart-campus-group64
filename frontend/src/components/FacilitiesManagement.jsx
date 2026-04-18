@@ -344,6 +344,8 @@ export default function FacilitiesManagement() {
                               <option value="Labs">Laboratory</option>
                               <option value="Meeting">Meeting Room</option>
                               <option value="Common">Common Space</option>
+                              <option value="Sports Facility">Sports Facility</option>
+                              <option value="Study Area">Study Area</option>
                             </>
                           ) : (
                             <>
