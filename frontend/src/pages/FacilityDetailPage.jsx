@@ -72,6 +72,19 @@ const getAmenities = (category) => {
         { icon: DoorOpen, label: "Open Access", available: true },
         { icon: Monitor, label: "Info Screens", available: false },
       ];
+    case "Study Area":
+      return [
+        ...base,
+        { icon: Zap, label: "Charging Points", available: true },
+        { icon: Users, label: "Quiet Environment", available: true },
+        { icon: Wind, label: "Air Purifiers", available: true },
+      ];
+    case "Sports":
+      return [
+        { icon: Wind, label: "Ventilation", available: true },
+        { icon: Users, label: "Changing Rooms", available: true },
+        { icon: ShieldCheck, label: "Safety Equipment", available: true },
+      ];
     default:
       return base;
   }
@@ -103,6 +116,20 @@ const getRules = (category) => {
       return [
         "Meetings should start and end within the booked time slot.",
         "External visitors require a visitor pass from security.",
+        ...common,
+      ];
+    case "Study Area":
+      return [
+        "Strict silence must be maintained at all times.",
+        "Reserving seats for others is not permitted.",
+        "Personal belongings should not be left unattended.",
+        ...common,
+      ];
+    case "Sports":
+      return [
+        "Appropriate sports attire and non-marking shoes are mandatory.",
+        "Users are responsible for returning any borrowed equipment.",
+        "Health and safety regulations strictly apply and must be followed.",
         ...common,
       ];
     default:
@@ -380,7 +407,9 @@ const FacilityDetailPage = () => {
                     {resource.category === "Labs" && " high-tech laboratory environment built for hands-on practical sessions, research activities, and collaborative experiments. Features industry-grade equipment and safety infrastructure."}
                     {resource.category === "Meeting" && " professional meeting room ideal for faculty discussions, departmental meetings, and small-group workshops. Offers a quiet, soundproof environment with modern conferencing tools."}
                     {resource.category === "Common" && " shared campus space perfect for student collaboration, informal study sessions, and leisure activities. An open-access zone designed to foster community engagement."}
-                    {!["L Halls", "Labs", "Meeting", "Common"].includes(resource.category) && ` campus resource categorized under ${resource.category}. Available for booking and general university use. Contact administration for specific usage guidelines.`}
+                    {resource.category === "Study Area" && " dedicated quiet zone engineered for focused student learning and academic reading. Features individual study pods and collaborative seating arrangements."}
+                    {resource.category === "Sports" && " dynamic athletic facility intended for physical education, university sports teams, and recreational student activities. Subject to health and safety regulations."}
+                    {!["L Halls", "Labs", "Meeting", "Common", "Study Area", "Sports"].includes(resource.category) && ` campus resource categorized under ${resource.category}. Available for booking and general university use. Contact administration for specific usage guidelines.`}
                   </p>
                 )}
                 <p className="text-slate-500 mt-4 text-sm">
