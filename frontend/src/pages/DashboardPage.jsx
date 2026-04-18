@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "../utils/constants";
 
 const DashboardPage = () => {
-  const { isAdmin, isTechnician, isAuthenticated } = useAuth();
+  const { isAdmin, isTechnician, isStaff, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,12 +13,12 @@ const DashboardPage = () => {
       navigate(ROUTES.LOGIN, { replace: true });
     } else if (isAdmin) {
       navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
-    } else if (isTechnician) {
-      navigate(ROUTES.TECHNICIAN_DASHBOARD, { replace: true });
+    } else if (isTechnician || isStaff) {
+      navigate(ROUTES.STAFF_DASHBOARD, { replace: true });
     } else {
       navigate(ROUTES.STUDENT_DASHBOARD, { replace: true });
     }
-  }, [isAdmin, isTechnician, isAuthenticated, navigate]);
+  }, [isAdmin, isTechnician, isStaff, isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

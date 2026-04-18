@@ -16,7 +16,7 @@ import StudentDashboardPage from "../pages/StudentDashboardPage";
 import StudentProfilePage from "../pages/StudentProfilePage";
 import AdminDashboardPage from "../pages/AdminDashboardPage";
 import AdminProfilePage from "../pages/AdminProfilePage";
-import TechnicianDashboardPage from "../pages/TechnicianDashboardPage";
+import StaffDashboardPage from "../pages/StaffDashboardPage";
 import TrackTicketPage from "../pages/TrackTicketPage";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 import BookingPage from "../pages/BookingPage";
@@ -102,12 +102,12 @@ const AppRouter = () => {
           }
         />
 
-        {/* Technician-only route */}
+        {/* Staff-only route */}
         <Route
-          path={ROUTES.TECHNICIAN_DASHBOARD}
+          path={ROUTES.STAFF_DASHBOARD}
           element={
-            <ProtectedRoute allowedRoles={["TECHNICIAN"]}>
-              <TechnicianDashboardPage />
+            <ProtectedRoute allowedRoles={["TECHNICIAN", "STAFF"]}>
+              <StaffDashboardPage />
             </ProtectedRoute>
           }
         />

@@ -105,6 +105,10 @@ public class IncidentTicketService {
         return repository.findAll();
     }
 
+    public List<IncidentTicket> getTechnicianTickets(String technicianId) {
+        return repository.findByTechnicianId(technicianId);
+    }
+
     public IncidentTicket getTicketById(String id) {
         return repository.findById(id).orElse(null);
     }
@@ -151,5 +155,21 @@ public class IncidentTicketService {
         );
 
         return savedTicket;
+    }
+
+    public IncidentTicket resolveTicket(String ticketId, String notes) {
+        IncidentTicket ticket = repository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
+        ticket.setStatus(IncidentStatus.RESOLVED);
+        ticket.setResolutionNotes(notes);
+        return repository.save(ticket);
+    }
+
+    public IncidentTicket addComment(String ticketId, IncidentTicket.TicketComment comment) {
+        IncidentTicket ticket = repository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
+        if (ticket.getComments() == null) {
+            ticket.setComments(new ArrayList<>());
+        }
+        ticket.getComments().add(comment);
+        return repository.save(ticket);
     }
 }
