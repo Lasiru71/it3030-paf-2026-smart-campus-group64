@@ -6,7 +6,7 @@ import autoTable from "jspdf-autotable";
 import {
   Users, BookOpen, BarChart3, Settings, Shield,
   Trash2, Edit, LogOut, Bell, Search, TrendingUp, Filter,
-  Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3,
+  Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3, User, MapPin, Calendar,
   Globe, Lock, Palette, Server, Mail, Smartphone, Moon, Sun, Database, RefreshCw, Save, Download,
   FileText, LayoutGrid, Plus, Minus, MessageSquare, CalendarDays, AlertCircle, Wrench
 } from "lucide-react";
@@ -539,52 +539,61 @@ function BookingsPanel({ onGenerateReport }) {
                 </button>
               </div>
 
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase font-black tracking-widest text-slate-400">
-                      <th className="px-6 py-4">Resource</th>
-                      <th className="px-6 py-4">Requested By</th>
-                      <th className="px-6 py-4">Time</th>
-                      <th className="px-6 py-4">Duration</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {groupedBookings[date].map(booking => (
-                      <tr key={booking.id} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-4">
-                          <p className="font-bold text-sm text-slate-800">{booking.resourceName}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{booking.members} members</p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-semibold text-slate-700">{booking.userEmail}</p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-bold text-slate-700">{booking.bookingTime}</p>
-                        </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-slate-600">
-                          {booking.durationHours}h {booking.durationMinutes > 0 ? `${booking.durationMinutes}m` : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${getStatusColor(booking.status)}`}>
+              <div className="space-y-4">
+                {groupedBookings[date].map(booking => (
+                  <div key={booking.id} className="group bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="flex items-center justify-between gap-6">
+                      {/* Resource Info */}
+                      <div className="flex items-center gap-4 min-w-[200px]">
+                        <div className="h-12 w-12 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                          <BookOpen className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="font-black text-slate-900 leading-tight">{booking.resourceName}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 flex items-center gap-1">
+                            <Users className="h-3 w-3" /> {booking.members} members
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Requester & Schedule */}
+                      <div className="flex-1 flex items-center gap-8">
+                        <div>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Requested By</p>
+                          <p className="text-sm font-bold text-slate-700">{booking.userEmail}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Schedule</p>
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-3.5 w-3.5 text-blue-500" />
+                            <p className="text-sm font-black text-slate-800">{booking.bookingTime}</p>
+                            <span className="h-1 w-1 rounded-full bg-slate-300 mx-1" />
+                            <p className="text-xs font-bold text-slate-500">
+                               {booking.durationHours}h {booking.durationMinutes > 0 ? `${booking.durationMinutes}m` : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status */}
+                      <div className="flex items-center gap-6">
+                         <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border shadow-sm ${getStatusColor(booking.status)}`}>
                             {booking.status || "PENDING"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end items-center gap-2">
+                         </div>
+
+                         {/* Actions */}
+                         <div className="flex items-center gap-2 border-l border-slate-100 pl-6">
                             {(booking.status === "PENDING" || !booking.status) && (
                               <>
                                 <button
                                   onClick={() => handleStatusChange(booking.id, "APPROVED")}
-                                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider rounded-xl shadow-sm transition-all shadow-emerald-200"
+                                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-emerald-100 transition-all active:scale-95"
                                 >
                                   Approve
                                 </button>
                                 <button
                                   onClick={() => handleStatusChange(booking.id, "REJECTED")}
-                                  className="px-4 py-2 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all"
+                                  className="px-5 py-2 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
                                 >
                                   Reject
                                 </button>
@@ -592,17 +601,16 @@ function BookingsPanel({ onGenerateReport }) {
                             )}
                             <button
                               onClick={() => handleDelete(booking.id)}
-                              className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                              className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                               title="Delete Booking"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
@@ -1122,54 +1130,61 @@ function IndividualBookingsPanel() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-3xl border border-slate-200 p-20 text-center text-slate-500 font-medium">
+        <div className="bg-white rounded-3xl border border-slate-200 p-20 text-center text-slate-500 font-medium font-black uppercase text-[10px] tracking-widest">
           Loading individual requests...
         </div>
       ) : bookings.length === 0 ? (
         <div className="bg-white rounded-3xl border border-dashed border-slate-200 p-20 text-center shadow-sm">
           <Smartphone className="h-12 w-12 text-slate-300 mx-auto mb-4" />
           <p className="text-lg font-bold text-slate-500">No Individual Requests</p>
+          <p className="text-sm text-slate-400 mt-1">Direct student requests will appear here for configuration.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase font-black tracking-widest text-slate-400">
-                <th className="px-6 py-4">Requester</th>
-                <th className="px-6 py-4">Requested Support</th>
-                <th className="px-6 py-4">Details</th>
-                <th className="px-6 py-4">Target Location Selection</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+        <div className="space-y-6">
               {bookings.map(booking => {
                 const requestedFacilities = getFacilities(booking.resourceName);
                 const bookingMapping = selectedMapping[booking.id] || {};
                 
                 return (
-                  <tr key={booking.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-slate-800">{booking.userEmail}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{booking.members} members</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {requestedFacilities.map((tag, idx) => (
-                          <span key={idx} className="bg-blue-50 text-blue-600 text-[9px] font-black uppercase px-2 py-0.5 rounded border border-blue-100">
-                            {tag}
-                          </span>
-                        ))}
+                  <div key={booking.id} className="group bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-hidden relative">
+                    <div className="flex flex-col lg:flex-row gap-8">
+                      {/* Left: Requester & Info */}
+                      <div className="lg:w-1/4 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600">
+                            <User className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-slate-900 leading-tight">{booking.userEmail}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{booking.members} Team Members</p>
+                          </div>
+                        </div>
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100/50 italic font-medium text-slate-600 text-[11px] leading-relaxed">
+                          "{booking.message || "No special instructions provided."}"
+                        </div>
+
+                        <div className="flex flex-wrap gap-1.5">
+                          {requestedFacilities.map((tag, idx) => (
+                            <span key={idx} className="bg-blue-50 text-blue-600 text-[9px] font-black uppercase px-2 py-0.5 rounded-lg border border-blue-100">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center gap-4 text-slate-400 pt-2 border-t border-slate-100">
+                           <div className="flex items-center gap-1.5">
+                              <Calendar className="h-3 w-3" />
+                              <span className="text-[10px] font-bold">{booking.bookingDate}</span>
+                           </div>
+                           <div className="flex items-center gap-1.5">
+                              <Clock className="h-3 w-3" />
+                              <span className="text-[10px] font-bold">{booking.bookingTime}</span>
+                           </div>
+                        </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 max-w-xs">
-                      <p className="text-xs text-slate-600 font-medium line-clamp-2 italic">
-                        {booking.message || "No special requests"}
-                      </p>
-                      <p className="text-[10px] font-bold text-slate-400 mt-1">{booking.bookingDate} @ {booking.bookingTime}</p>
-                    </td>
-                    <td className="px-6 py-4 min-w-[320px]">
+                        {/* Middle: Location Selection */}
+                        <div className="flex-1 bg-slate-50/50 rounded-3xl border border-slate-100 p-5">
+
                       {booking.status === "APPROVED" ? (
                         <div className="space-y-2">
                           {booking.studentSelection ? (
@@ -1266,44 +1281,64 @@ function IndividualBookingsPanel() {
                           </div>
                         </div>
                       )}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${getStatusColor(booking.status)}`}>
-                        {booking.status || "PENDING"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end items-center gap-2">
-                         {(booking.status === "PENDING" || !booking.status) && (
-                          <>
-                            <button
-                              onClick={() => handleStatusChange(booking.id, "APPROVED")}
-                              className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider rounded-lg shadow-sm transition-all"
-                            >
-                              Submit
-                            </button>
-                            <button
-                              onClick={() => handleStatusChange(booking.id, "REJECTED")}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all"
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                        <button
-                          onClick={() => handleDelete(booking.id)}
-                          className="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        </div>
+
+                        {/* Right: Decision Controls */}
+                        <div className="lg:w-1/4 flex flex-col justify-between">
+                           <div className="space-y-4">
+                             {(booking.status === "PENDING" || !booking.status) ? (
+                                <div className="space-y-3">
+                                   <div>
+                                      <div className="flex items-center gap-2 mb-1.5 ml-1">
+                                         <Edit3 className="h-3 w-3 text-slate-400" />
+                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Instruction to student</p>
+                                      </div>
+                                      <textarea
+                                        value={adminNotes[booking.id] || ""}
+                                        onChange={(e) => setAdminNotes(prev => ({ ...prev, [booking.id]: e.target.value }))}
+                                        placeholder="Add notes for student..."
+                                        className="w-full bg-slate-100/50 border border-slate-200 rounded-2xl p-3 text-[11px] text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all min-h-[90px] resize-none"
+                                      />
+                                   </div>
+                                   <div className="grid grid-cols-2 gap-2">
+                                      <button
+                                        onClick={() => handleStatusChange(booking.id, "APPROVED")}
+                                        className="py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-blue-100 transition-all active:scale-95"
+                                      >
+                                        Approve
+                                      </button>
+                                      <button
+                                        onClick={() => handleStatusChange(booking.id, "REJECTED")}
+                                        className="py-2.5 bg-white text-slate-600 hover:bg-red-50 hover:text-red-600 border border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
+                                      >
+                                        Reject
+                                      </button>
+                                   </div>
+                                </div>
+                             ) : (
+                                <div className="text-center p-6 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                                   <CheckCircle className="h-8 w-8 text-slate-200 mx-auto mb-2" />
+                                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Configuration Complete</p>
+                                </div>
+                             )}
+                           </div>
+                           
+                           <div className="flex justify-end pt-4 border-t border-slate-100 mt-6 lg:mt-0">
+                              <button
+                                onClick={() => handleDelete(booking.id)}
+                                className="flex items-center gap-2 px-4 py-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all group"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                <span className="text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Discard</span>
+                              </button>
+                           </div>
+                        </div>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  );
+                })}
+              </div>
+
       )}
     </main>
   );
@@ -1977,31 +2012,8 @@ export default function AdminDashboardPage() {
 
         {activeNav === "Facilities & Resources" && <FacilitiesManagement />}
 
-        {activeNav === "Bookings" && (
-          <main className="flex-1 overflow-y-auto bg-slate-50 p-8 space-y-6">
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden p-8 text-center">
-              <div className="h-16 w-16 bg-violet-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="h-8 w-8 text-violet-600" />
-              </div>
-              <h2 className="text-2xl font-black text-slate-900 mb-2">Booking Management</h2>
-              <p className="text-slate-500 max-w-md mx-auto">
-                Comprehensive booking oversight. Monitor reservations, handle cancellations, and view schedule distributions across all campus resources.
-              </p>
-              <div className="mt-8 flex justify-center gap-4">
-                <div className="bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Active Bookings</p>
-                  <p className="text-xl font-black text-slate-800">347</p>
-                </div>
-                <div className="bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pending</p>
-                  <p className="text-xl font-black text-slate-800">14 Actions</p>
-                </div>
-              </div>
-            </div>
-          </main>
-        )}
 
-        {(activeNav === "Overview" || activeNav === "Users" || activeNav === "Analytics" || activeNav === "Reports" || activeNav === "Bookings") && (
+        {(activeNav === "Overview" || activeNav === "Users" || activeNav === "Analytics" || activeNav === "Reports") && (
           <main className={`flex-1 overflow-y-auto px-8 py-7 bg-slate-50 ${(activeNav === "Overview" || activeNav === "Analytics" || activeNav === "Reports") ? "space-y-7" : ""} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
 
             {/* ─ Colorful Stats ─ */}
