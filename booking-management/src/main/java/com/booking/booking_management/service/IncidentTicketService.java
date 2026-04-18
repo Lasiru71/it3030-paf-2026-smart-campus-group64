@@ -7,6 +7,7 @@ import com.booking.booking_management.model.IncidentTicket;
 import com.booking.booking_management.model.User;
 import com.booking.booking_management.repository.IncidentTicketRepository;
 import com.booking.booking_management.repository.UserRepository;
+import com.booking.booking_management.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,12 +26,14 @@ public class IncidentTicketService {
 
     private final IncidentTicketRepository repository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
     private final String uploadDir = "uploads/incidents";
 
     @Autowired
-    public IncidentTicketService(IncidentTicketRepository repository, UserRepository userRepository) {
+    public IncidentTicketService(IncidentTicketRepository repository, UserRepository userRepository, NotificationService notificationService) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
         try {
             Files.createDirectories(Paths.get(uploadDir));
         } catch (IOException e) {
@@ -66,7 +69,17 @@ public class IncidentTicketService {
         ticket.setImageUrls(imageUrls);
         ticket.setStatus(IncidentStatus.OPEN);
 
-        return repository.save(ticket);
+        IncidentTicket savedTicket = repository.save(ticket);
+        
+        // Trigger notification
+        notificationService.createNotification(
+                savedTicket.getStudentId(),
+                "Ticket Created",
+                "Your incident ticket for " + savedTicket.getResource() + " has been logged successfully.",
+                "TICKET"
+        );
+
+        return savedTicket;
     }
 
     public List<IncidentTicket> getStudentTickets(String studentId) {
@@ -93,7 +106,17 @@ public class IncidentTicketService {
         ticket.setTechnicianId(technicianId);
         ticket.setTechnicianName(technicianName);
         ticket.setStatus(IncidentStatus.IN_PROGRESS);
-        return repository.save(ticket);
+        IncidentTicket savedTicket = repository.save(ticket);
+        
+        // Trigger notification
+        notificationService.createNotification(
+                savedTicket.getStudentId(),
+                "Ticket Assigned",
+                "Your ticket has been assigned to " + technicianName + ".",
+                "TICKET"
+        );
+
+        return savedTicket;
     }
 
     public IncidentTicket updateStatus(String ticketId, IncidentStatus status, String rejectionReason) {
@@ -102,6 +125,16 @@ public class IncidentTicketService {
         if (status == IncidentStatus.REJECTED && rejectionReason != null) {
             ticket.setRejectionReason(rejectionReason);
         }
-        return repository.save(ticket);
+        IncidentTicket savedTicket = repository.save(ticket);
+        
+        // Trigger notification
+        notificationService.createNotification(
+                savedTicket.getStudentId(),
+                "Ticket Update",
+                "Your ticket status has been updated to " + status.name() + ".",
+                "TICKET"
+        );
+
+        return savedTicket;
     }
 }

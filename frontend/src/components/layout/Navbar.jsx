@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bell, Menu, X, ChevronDown, LogOut, User, Shield, Wrench, AlertCircle, Search } from "lucide-react";
 import Logo from "../common/Logo";
 import Button from "../common/Button";
+import NotificationBell from "./NotificationBell";
 import { useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../utils/constants";
 
@@ -132,11 +133,8 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Bell icon */}
-                <button className="relative p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-600 ring-2 ring-white" />
-                </button>
+                {/* Notification Bell */}
+                <NotificationBell />
 
                 {/* User profile dropdown */}
                 <div className="relative">

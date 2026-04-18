@@ -4,6 +4,7 @@ import com.booking.booking_management.model.Booking;
 import com.booking.booking_management.model.Resource;
 import com.booking.booking_management.repository.BookingRepository;
 import com.booking.booking_management.repository.ResourceRepository;
+import com.booking.booking_management.model.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,6 +20,9 @@ public class BookingService {
 
     @Autowired
     private ResourceRepository resourceRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
@@ -97,7 +101,17 @@ public class BookingService {
             booking.setSeatsDeducted(false);
         }
 
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+        
+        // Trigger notification
+        notificationService.createNotification(
+                savedBooking.getUserEmail(),
+                "Booking Submitted",
+                "Your booking for " + savedBooking.getResourceName() + " has been successfully submitted and is pending approval.",
+                "BOOKING"
+        );
+
+        return savedBooking;
     }
 
     public Booking updateBookingStatus(@NonNull String id, String status, String locationSuggestions, String adminNote) {
@@ -128,7 +142,23 @@ public class BookingService {
                 }
             }
             
-            return bookingRepository.save(booking);
+            Booking savedBooking = bookingRepository.save(booking);
+            
+            // Trigger notification for status change
+            String title = "Booking " + status;
+            String messageDetail = "Your booking for " + savedBooking.getResourceName() + " has been " + status.toLowerCase();
+            if (adminNote != null && !adminNote.isEmpty()) {
+                messageDetail += ". Admin Note: " + adminNote;
+            }
+            
+            notificationService.createNotification(
+                    savedBooking.getUserEmail(),
+                    title,
+                    messageDetail,
+                    "BOOKING"
+            );
+
+            return savedBooking;
         }).orElseThrow(() -> new RuntimeException("Booking not found"));
     }
 
