@@ -9,6 +9,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { login, googleLogin } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "../utils/constants";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -52,6 +53,16 @@ const LoginPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    console.log("Google Login Response:", credentialResponse);
+    // TODO: Send token to backend for verification
+    setServerError("Google Login is configured! You can now integrate this with your backend.");
+  };
+
+  const handleGoogleError = () => {
+    setServerError("Google Login failed. Please try again.");
   };
 
   return (
@@ -192,6 +203,26 @@ const LoginPage = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-4 text-slate-500 font-bold tracking-widest">Or continue with</span>
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  shape="circle"
+                  text="signin_with"
+                  width="100%"
+                />
               </div>
             </form>
 
