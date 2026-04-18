@@ -6,7 +6,8 @@ import {
   CalendarDays, BookOpen, BarChart3, Settings, Shield,
   Trash2, Edit, LogOut, Bell, Search, TrendingUp,
   Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3,
-  MapPin, Plus, ArrowRight, XCircle, Layers, Globe, Zap, AlertCircle
+  MapPin, Plus, ArrowRight, XCircle, Layers, Globe, Zap, AlertCircle,
+  Wrench
 } from "lucide-react";
 import { ROUTES } from "../utils/constants";
 
@@ -61,7 +62,7 @@ const SAMPLE_BOOKINGS = [
 // ─── Main Component ───────────────────────────────────────────
 
 export default function StudentDashboardPage() {
-  const { auth, logoutUser } = useAuth();
+  const { auth, logoutUser, isStaff, isTechnician } = useAuth();
   const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("Overview");
   const [search, setSearch] = useState("");
@@ -130,6 +131,24 @@ export default function StudentDashboardPage() {
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 overflow-y-auto">
+          {/* STAFF QUICK ACCESS */}
+          {(isStaff || isTechnician) && (
+            <div className="mb-6 px-2">
+              <button 
+                onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
+                className="w-full flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl shadow-xl shadow-blue-900/40 transition-all hover:scale-105 active:scale-95 group relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-8 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <Wrench className="h-5 w-5 animate-bounce" />
+                <div className="text-left">
+                  <p className="text-[10px] font-black uppercase tracking-widest opacity-70 leading-none mb-1">Staff Access</p>
+                  <p className="text-xs font-black tracking-tight whitespace-nowrap">View Assigned Ticket</p>
+                </div>
+                <ArrowRight className="h-4 w-4 ml-auto group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          )}
+
           {navSections.map((section) => (
             <div key={section.header} className="mb-3">
               <p className="px-4 mb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">{section.header}</p>

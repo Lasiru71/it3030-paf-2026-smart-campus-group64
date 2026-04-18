@@ -41,6 +41,11 @@ public class IncidentTicketController {
         return ResponseEntity.ok(service.getStudentTickets(studentId));
     }
 
+    @GetMapping("/technician/{technicianId}")
+    public ResponseEntity<List<IncidentTicket>> getTechnicianTickets(@PathVariable String technicianId) {
+        return ResponseEntity.ok(service.getTechnicianTickets(technicianId));
+    }
+
     @GetMapping
     public ResponseEntity<List<IncidentTicket>> getAllTickets() {
         return ResponseEntity.ok(service.getAllTickets());
@@ -74,6 +79,20 @@ public class IncidentTicketController {
             @RequestParam IncidentStatus status,
             @RequestParam(required = false) String rejectionReason) {
         return ResponseEntity.ok(service.updateStatus(id, status, rejectionReason));
+    }
+
+    @PatchMapping("/{id}/resolve")
+    public ResponseEntity<IncidentTicket> resolveTicket(
+            @PathVariable String id,
+            @RequestParam String notes) {
+        return ResponseEntity.ok(service.resolveTicket(id, notes));
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<IncidentTicket> addComment(
+            @PathVariable String id,
+            @RequestBody IncidentTicket.TicketComment comment) {
+        return ResponseEntity.ok(service.addComment(id, comment));
     }
 
     @GetMapping("/images/{filename:.+}")

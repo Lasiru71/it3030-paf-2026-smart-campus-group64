@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 @Document(collection = "incident_tickets")
 public class IncidentTicket {
@@ -27,11 +28,12 @@ public class IncidentTicket {
     private String contactInfo;
 
     private List<String> imageUrls = new ArrayList<>();
-
     private String studentId;
     private String technicianId;
     private String technicianName;
     private String rejectionReason;
+    private String resolutionNotes;
+    private List<TicketComment> comments = new ArrayList<>();
 
     private IncidentStatus status;
 
@@ -159,5 +161,47 @@ public class IncidentTicket {
 
     public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
+    }
+
+    public String getResolutionNotes() {
+        return resolutionNotes;
+    }
+
+    public void setResolutionNotes(String resolutionNotes) {
+        this.resolutionNotes = resolutionNotes;
+    }
+
+    public List<TicketComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<TicketComment> comments) {
+        this.comments = comments;
+    }
+
+    // --- Inner Class for Comments ---
+    public static class TicketComment {
+        private String authorId;
+        private String authorName;
+        private String text;
+        private LocalDateTime timestamp;
+
+        public TicketComment() {}
+
+        public TicketComment(String authorId, String authorName, String text, LocalDateTime timestamp) {
+            this.authorId = authorId;
+            this.authorName = authorName;
+            this.text = text;
+            this.timestamp = timestamp;
+        }
+
+        public String getAuthorId() { return authorId; }
+        public void setAuthorId(String authorId) { this.authorId = authorId; }
+        public String getAuthorName() { return authorName; }
+        public void setAuthorName(String authorName) { this.authorName = authorName; }
+        public String getText() { return text; }
+        public void setText(String text) { this.text = text; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     }
 }
