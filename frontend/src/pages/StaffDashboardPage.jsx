@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import axiosInstance from "../services/axiosInstance";
 import { useAuth } from "../context/AuthContext";
+import { BASE_URL } from "../utils/constants";
 
 const StaffDashboardPage = () => {
     const { auth } = useAuth();
@@ -290,6 +291,23 @@ const StaffDashboardPage = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {selectedTicket.imageUrls?.length > 0 && (
+                                            <div className="text-left mt-8">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Evidence Gallery</label>
+                                                <div className="flex flex-wrap gap-4">
+                                                    {selectedTicket.imageUrls.map((url, i) => (
+                                                        <div key={i} className="group relative">
+                                                            <img 
+                                                                src={encodeURI(url.startsWith('http') ? url : `${BASE_URL}${url}`)} 
+                                                                alt="Evidence" 
+                                                                className="h-32 w-32 object-cover rounded-[1.5rem] border border-slate-200 shadow-lg transition-all group-hover:scale-105 group-hover:ring-8 group-hover:ring-blue-50 cursor-zoom-in" 
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {selectedTicket.status === "RESOLVED" && (
                                             <div className="bg-emerald-50 rounded-[2rem] p-8 border border-emerald-100">
