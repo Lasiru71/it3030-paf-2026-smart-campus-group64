@@ -934,8 +934,8 @@ export default function FacilitiesManagement() {
                   <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
 
                   <div className="p-5 sm:p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex gap-4 items-center flex-1">
+                    <div className="flex items-start justify-between mb-4 w-full">
+                      <div className="flex gap-4 items-center flex-1 min-w-0">
                         {/* Image Container - properly sized and styled */}
                         <div className="h-24 w-28 sm:h-28 sm:w-32 flex-shrink-0 flex items-center justify-center bg-slate-100 rounded-2xl group-hover:bg-slate-200 transition-colors overflow-hidden relative shadow-sm">
                           {f.image ? (
@@ -950,7 +950,7 @@ export default function FacilitiesManagement() {
                           <h4 className="text-lg font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2" title={f.name}>
                             {f.name}
                           </h4>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5">{f.category}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1.5 truncate">{f.category}</p>
                         </div>
                       </div>
 
