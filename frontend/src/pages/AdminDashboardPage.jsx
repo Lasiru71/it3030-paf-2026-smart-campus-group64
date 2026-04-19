@@ -9,7 +9,7 @@ import {
   Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3, User, MapPin, Calendar,
   Globe, Lock, Palette, Server, Mail, Smartphone, Moon, Sun, Database, RefreshCw, Save, Download,
   FileText, LayoutGrid, Plus, Minus, MessageSquare, CalendarDays, AlertCircle, Wrench,
-  Send, MessageCircle, User, Pencil, ChevronDown
+  Send, MessageCircle, Pencil, ChevronDown
 } from "lucide-react";
 import { ROUTES, BASE_URL } from "../utils/constants";
 import { bookingService } from "../services/bookingService";
