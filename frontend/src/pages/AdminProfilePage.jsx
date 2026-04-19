@@ -1,5 +1,5 @@
 // AdminProfilePage — premium administrator profile page
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -9,6 +9,7 @@ import {
   Home, Settings, BarChart3, LogOut, ChevronRight, Bell, Search
 } from "lucide-react";
 import { ROUTES } from "../utils/constants";
+import { userService } from "../services/userService";
 
 const navItems = [
   { icon: Home, label: "Overview" },
@@ -41,12 +42,35 @@ export default function AdminProfilePage() {
   const displayName = auth?.fullName || auth?.email || "Admin";
 
   const [form, setForm] = useState({
-    fullName:   auth?.fullName || "Deshan Perera",
-    email:      auth?.email    || "deshan@campusreserve.edu",
-    phone:      "+94 77 123 4567",
-    department: "IT Administration",
-    bio:        "Senior system administrator managing university campus resources and user access.",
+    fullName:   auth?.fullName || "",
+    email:      auth?.email    || "",
+    phone:      "",
+    department: "",
+    bio:        "",
   });
+
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real user data on mount
+  useEffect(() => {
+    if (auth?.id) {
+       userService.getUserById(auth.id)
+         .then(data => {
+            setForm({
+              fullName: data.fullName || "",
+              email: data.email || "",
+              phone: data.phone || "",
+              department: data.department || "",
+              bio: data.bio || "",
+            });
+            setLoading(false);
+         })
+         .catch(err => {
+            console.error("Failed to load profile", err);
+            setLoading(false);
+         });
+    }
+  }, [auth?.id]);
 
   const [passForm, setPassForm] = useState({ current: "", newPass: "", confirm: "" });
 
@@ -62,10 +86,22 @@ export default function AdminProfilePage() {
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
-    setSaved(true);
-    setEditMode(false);
-    setTimeout(() => setSaved(false), 3000);
+  const handleSave = async () => {
+    try {
+      if (auth?.id) {
+        await userService.updateProfile(auth.id, {
+          fullName: form.fullName,
+          phone: form.phone,
+          department: form.department,
+          bio: form.bio
+        });
+        setSaved(true);
+        setEditMode(false);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (err) {
+      alert("Failed to save changes. Please try again.");
+    }
   };
 
   return (
@@ -173,9 +209,16 @@ export default function AdminProfilePage() {
         <main className="flex-1 overflow-y-auto px-8 py-7">
           {/* Save banner */}
           {saved && (
-            <div className="mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold px-5 py-3 rounded-2xl">
+            <div className="mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold px-5 py-3 rounded-2xl animate-in fade-in duration-300">
               <CheckCircle className="h-4 w-4 shrink-0" />
               Profile updated successfully!
+            </div>
+          )}
+
+          {loading && (
+            <div className="mb-6 flex items-center gap-3 bg-blue-50 border border-blue-200 text-blue-700 text-sm font-semibold px-5 py-3 rounded-2xl animate-pulse">
+              <Activity className="h-4 w-4 animate-spin" />
+              Fetching latest profile data...
             </div>
           )}
 

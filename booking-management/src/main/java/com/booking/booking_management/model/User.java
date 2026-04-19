@@ -21,6 +21,10 @@ public class User {
     private Role role;
 
     private String status = "Active";
+    private String phone;
+    private String department;
+    private String bio;
+    private String studentId;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -96,5 +100,37 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 }
