@@ -1,5 +1,5 @@
 // StudentProfilePage — Premium profile page for students
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import { useAuth } from "../context/AuthContext";
@@ -9,6 +9,7 @@ import {
   ArrowLeft, BookOpen, Clock, CalendarDays, Activity
 } from "lucide-react";
 import { ROUTES } from "../utils/constants";
+import { userService } from "../services/userService";
 
 export default function StudentProfilePage() {
   const { auth, isAdmin, isStaff, isUser, userRole } = useAuth();
@@ -26,14 +27,35 @@ export default function StudentProfilePage() {
   const displayName = auth?.fullName || auth?.email || (isStudent ? "Student" : "Staff Member");
 
   const [form, setForm] = useState({
-    fullName: auth?.fullName || (isStudent ? "Student Name" : "Staff Name"),
-    email: auth?.email || "user@example.com",
-    phone: "+94 71 234 5678",
-    studentId: isStudent ? "IT20261011" : "ST20261011",
-    bio: isStudent
-      ? "Computer Science undergraduate passionate about AI and web development."
-      : "University staff member dedicated to academic excellence and system optimization.",
+    fullName: auth?.fullName || "",
+    email: auth?.email || "",
+    phone: "",
+    studentId: "",
+    bio: "",
   });
+
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real user data on mount
+  useEffect(() => {
+    if (auth?.id) {
+       userService.getUserById(auth.id)
+         .then(data => {
+            setForm({
+              fullName: data.fullName || "",
+              email: data.email || "",
+              phone: data.phone || "",
+              studentId: data.studentId || "",
+              bio: data.bio || "",
+            });
+            setLoading(false);
+         })
+         .catch(err => {
+            console.error("Failed to load profile", err);
+            setLoading(false);
+         });
+    }
+  }, [auth?.id]);
 
   const [passForm, setPassForm] = useState({ current: "", newPass: "", confirm: "" });
 
@@ -49,10 +71,22 @@ export default function StudentProfilePage() {
     reader.readAsDataURL(file);
   };
 
-  const handleSave = () => {
-    setSaved(true);
-    setEditMode(false);
-    setTimeout(() => setSaved(false), 3000);
+  const handleSave = async () => {
+    try {
+      if (auth?.id) {
+        await userService.updateProfile(auth.id, {
+          fullName: form.fullName,
+          phone: form.phone,
+          studentId: form.studentId,
+          bio: form.bio
+        });
+        setSaved(true);
+        setEditMode(false);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (err) {
+      alert("Failed to save changes. Please try again.");
+    }
   };
 
   return (
@@ -70,9 +104,16 @@ export default function StudentProfilePage() {
           </div>
 
           {saved && (
-            <div className="mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold px-5 py-3 rounded-2xl">
+            <div className="mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold px-5 py-3 rounded-2xl animate-in fade-in duration-300">
               <CheckCircle className="h-4 w-4 shrink-0" />
               Profile updated successfully!
+            </div>
+          )}
+
+          {loading && (
+            <div className="mb-6 flex items-center gap-3 bg-blue-50 border border-blue-200 text-blue-700 text-sm font-semibold px-5 py-3 rounded-2xl animate-pulse">
+              <Activity className="h-4 w-4 animate-spin" />
+              Fetching latest profile data...
             </div>
           )}
 
@@ -218,8 +259,8 @@ export default function StudentProfilePage() {
                             type={field.type}
                             value={form[field.id]}
                             onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
-                            disabled={!editMode || field.readonly}
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${editMode && !field.readonly
+                            disabled={!editMode}
+                            className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${editMode
                                 ? "border-slate-300 bg-white text-slate-800 shadow-sm"
                                 : "border-slate-100 bg-slate-50 text-slate-600 cursor-default"
                               }`}
