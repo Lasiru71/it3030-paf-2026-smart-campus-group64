@@ -9,7 +9,7 @@ import {
   Activity, Home, ChevronRight, X, CheckCircle, Clock, Edit3, User, MapPin, Calendar,
   Globe, Lock, Palette, Server, Mail, Smartphone, Moon, Sun, Database, RefreshCw, Save, Download,
   FileText, LayoutGrid, Plus, Minus, MessageSquare, CalendarDays, AlertCircle, Wrench,
-  Send, MessageCircle, User, Pencil, ChevronDown
+  Send, MessageCircle, Pencil, ChevronDown
 } from "lucide-react";
 import { ROUTES, BASE_URL } from "../utils/constants";
 import { bookingService } from "../services/bookingService";
@@ -86,7 +86,7 @@ const navSections = [
   },
 ];
 
-// â”€â”€â”€ Toggle Switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Toggle Switch ───────────────────────────────────────────
 function Toggle({ checked, onChange }) {
   return (
     <button
@@ -102,7 +102,7 @@ function Toggle({ checked, onChange }) {
   );
 }
 
-// â”€â”€â”€ Settings Panel Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Settings Panel Helpers ────────────────────────────────────
 const Field = ({ label, value, onChange, type = "text" }) => (
   <div>
     <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">{label}</label>
@@ -126,7 +126,7 @@ const Row = ({ label, sub, icon, iconBg, control }) => (
   </div>
 );
 
-// â”€â”€â”€ Settings Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Settings Panel ──────────────────────────────────────────
 function SettingsPanel() {
   const [notifs, setNotifs] = useState({ email: true, sms: false, push: true, booking: true, security: true });
   const [security, setSecurity] = useState({ twoFa: false, sessionTimeout: "30", loginAlerts: true });
@@ -153,7 +153,7 @@ function SettingsPanel() {
 
   return (
     <main className="flex-1 overflow-y-auto bg-slate-50">
-      {/* â”€â”€ Colorful Hero Banner â”€â”€ */}
+      {/* ── Colorful Hero Banner ── */}
       <div className="relative overflow-hidden px-8 py-6"
         style={{ background: "linear-gradient(135deg, #1d4ed8 0%, #4f46e5 50%, #7c3aed 100%)" }}
       >
@@ -357,7 +357,7 @@ function SettingsPanel() {
   );
 }
 
-// â”€â”€â”€ Add User Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Add User Modal ──────────────────────────────────────────
 function AddUserModal({ onClose, onAdd }) {
   const [formData, setFormData] = useState({ name: "", email: "", role: "USER", password: "User@123" });
 
@@ -427,7 +427,7 @@ function AddUserModal({ onClose, onAdd }) {
   );
 }
 
-// â”€â”€â”€ Bookings Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Bookings Panel ──────────────────────────────────────────
 function BookingsPanel({ onGenerateReport }) {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -623,7 +623,7 @@ function BookingsPanel({ onGenerateReport }) {
   );
 }
 
-// â”€â”€â”€ Message Box Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Message Box Panel ───────────────────────────────────────
 function MessageBoxPanel() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -705,7 +705,7 @@ function MessageBoxPanel() {
   );
 }
 
-// â”€â”€â”€ Space Management Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Space Management Panel ──────────────────────────────────
 function SpaceManagementPanel() {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -962,8 +962,8 @@ function SpaceManagementPanel() {
   );
 }
 
-// â”€â”€â”€ Individual Bookings Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// â”€â”€â”€ Individual Bookings Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Individual Bookings Panel ─────────────────────────────
+// ─── Individual Bookings Panel ─────────────────────────────
 const BUILDINGS = {
   "Main Building": ["Floor 01", "Floor 02", "Floor 03", "Floor 04"],
   "New Building": ["Floor 03", "Floor 05", "Floor 08", "Floor 09"]
@@ -1349,7 +1349,7 @@ function IndividualBookingsPanel() {
 }
 
 
-// â”€â”€â”€ Tickets Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Tickets Panel ──────────────────────────────────────────
 function TicketsPanel() {
   const [tickets, setTickets] = useState([]);
   const [technicians, setTechnicians] = useState([]);
@@ -1594,7 +1594,7 @@ function TicketsPanel() {
             <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-white text-left">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 leading-tight">Oversee Incident</h3>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Management Console â€¢ {selectedTicket.id}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Management Console • {selectedTicket.id}</p>
               </div>
               <button onClick={() => { setSelectedTicket(null); setRejecting(false); }} className="h-10 w-10 rounded-full hover:bg-red-50 hover:text-red-500 text-slate-400 transition-all active:scale-95 flex items-center justify-center bg-slate-50 border border-slate-100">
                 <X className="h-5 w-5" />
@@ -1623,7 +1623,7 @@ function TicketsPanel() {
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                        <Shield className="h-12 w-12" />
                     </div>
-                    <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-3 italic">{selectedTicket.category} â€¢ Priority: {selectedTicket.priority}</p>
+                    <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-3 italic">{selectedTicket.category} • Priority: {selectedTicket.priority}</p>
                     <p className="text-sm text-slate-700 leading-relaxed font-bold italic antialiased">
                       "{selectedTicket.description}"
                     </p>
@@ -2012,22 +2012,16 @@ export default function AdminDashboardPage() {
       alternateRowStyles: { fillColor: [248, 250, 252] },
     });
     doc.save("CampusReserve_System_Overview.pdf");
-    setToast("System overview report downloaded! ðŸ“Š");
+    setToast("System overview report downloaded! 📊");
     setTimeout(() => setToast(null), 3000);
   };
 
   const generateBookingPDF = async (customData = null) => {
-<<<<<<< HEAD
-    setToast("Preparing your report... â³");
-    // If we have custom data (from BookingsPanel), use it. Otherwise, fetch fresh data.
-    let bookingsToReport = customData;
-=======
     setToast("Preparing your report... ⏳");
     try {
       // If called as an event handler, customData will be the event object.
       // We only want to use it if it's explicitly an array of bookings.
       let bookingsToReport = Array.isArray(customData) ? customData : null;
->>>>>>> origin/main
 
       if (!bookingsToReport) {
         const response = await bookingService.getAllBookings();
@@ -2218,7 +2212,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
-      {/* â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â• */}
+      {/* ══════════ SIDEBAR ══════════ */}
       <aside
         className="w-64 shrink-0 flex flex-col h-full border-r border-white/5"
         style={{ background: "linear-gradient(175deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)" }}
@@ -2297,13 +2291,13 @@ export default function AdminDashboardPage() {
         </div>
       </aside>
 
-      {/* â•â•â•â•â•â•â•â•â•â• MAIN CONTENT â•â•â•â•â•â•â•â•â•â• */}
+      {/* ══════════ MAIN CONTENT ══════════ */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Topbar */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm">
           <div>
             <h1 className="text-lg font-black text-slate-900 leading-none">{activeNav}</h1>
-            <p className="text-xs text-slate-400 mt-0.5 font-medium">Welcome back, {displayName} ðŸ‘‹</p>
+            <p className="text-xs text-slate-400 mt-0.5 font-medium">Welcome back, {displayName} 👋</p>
           </div>
           <div className="flex items-center gap-3">
 
@@ -2311,7 +2305,7 @@ export default function AdminDashboardPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search usersâ€¦"
+                placeholder="Search users…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-52 transition"
@@ -2321,7 +2315,7 @@ export default function AdminDashboardPage() {
           </div>
         </header>
 
-        {/* Body â€” conditionally render panels */}
+        {/* Body — conditionally render panels */}
         {activeNav === "Settings" && <SettingsPanel displayName={displayName} />}
         {activeNav === "Bookings" && <BookingsPanel onGenerateReport={generateBookingPDF} />}
         {activeNav === "Message Box" && <MessageBoxPanel />}
@@ -2335,7 +2329,7 @@ export default function AdminDashboardPage() {
         {(activeNav === "Overview" || activeNav === "Users" || activeNav === "Analytics" || activeNav === "Reports") && (
           <main className={`flex-1 overflow-y-auto px-8 py-7 bg-slate-50 ${(activeNav === "Overview" || activeNav === "Analytics" || activeNav === "Reports") ? "space-y-7" : ""} animate-in fade-in slide-in-from-bottom-2 duration-500`}>
 
-            {/* â”€ Colorful Stats â”€ */}
+            {/* ─ Colorful Stats ─ */}
             {activeNav === "Overview" && (
               <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
                 {[
@@ -2404,7 +2398,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* â”€ User Growth Trend + Enrollment Distribution â”€ */}
+            {/* ─ User Growth Trend + Enrollment Distribution ─ */}
             {activeNav === "Overview" && (
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-7">
                 {/* User Growth Trend (Line Chart) */}
@@ -2503,7 +2497,7 @@ export default function AdminDashboardPage() {
 
 
 
-            {/* â”€ System Analytics Tab â”€ */}
+            {/* ─ System Analytics Tab ─ */}
             {activeNav === "Analytics" && (
               <div className="space-y-7">
                 {/* Header */}
@@ -2585,7 +2579,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* â”€ Reports Tab â”€ */}
+            {/* ─ Reports Tab ─ */}
             {activeNav === "Reports" && (
               <div className="space-y-7">
                 <div>
@@ -2677,7 +2671,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* â”€ User Table â”€ */}
+            {/* ─ User Table ─ */}
             {activeNav === "Users" && (
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[600px]">
                 {/* Table header */}
