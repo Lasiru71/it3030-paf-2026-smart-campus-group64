@@ -47,13 +47,23 @@ const StaffDashboardPage = () => {
     };
 
     const formatTimestamp = (ts) => {
-        if (!ts) return "";
-        return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (!ts) return "---";
+        try {
+            if (Array.isArray(ts)) {
+                const [year, month, day, hour, minute] = ts;
+                return new Date(year, month - 1, day, hour, minute).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            const date = new Date(ts);
+            if (isNaN(date.getTime())) return "---";
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch (e) {
+            return "---";
+        }
     };
 
     const handleUpdateStatus = async (id, status) => {
         try {
-            const res = await axiosInstance.put(`/api/incidents/${id}/status`, null, { 
+            const res = await axiosInstance.patch(`/api/incidents/${id}/status`, null, { 
                 params: { status } 
             });
             const updated = res.data;
