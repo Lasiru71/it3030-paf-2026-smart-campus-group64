@@ -1658,10 +1658,14 @@ function TicketsPanel() {
             <div className="flex-1 overflow-hidden flex">
               {/* Left Side: Detail & Controls */}
               <div className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar border-r border-slate-50">
-                <div className="grid grid-cols-2 gap-6 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                   <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Resource Identity</label>
                     <p className="font-black text-slate-800 uppercase text-lg">{selectedTicket.resource}</p>
+                  </div>
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 uppercase">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Tracking ID</label>
+                    <p className="text-[11px] font-mono font-black text-slate-800 whitespace-nowrap overflow-x-auto custom-scrollbar-thin">{selectedTicket.id}</p>
                   </div>
                   <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Live Status</label>

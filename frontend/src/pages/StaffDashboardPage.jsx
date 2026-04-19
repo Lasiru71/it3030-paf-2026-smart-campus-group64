@@ -236,7 +236,8 @@ const StaffDashboardPage = () => {
                                 <div className="p-10 pb-0 flex justify-between items-start border-b border-slate-50 mb-8">
                                     <div className="pb-8">
                                         <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2 uppercase">{selectedTicket.resource}</h2>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex flex-wrap items-center gap-4">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Ticket ID: {selectedTicket.id}</p>
                                             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusStyles(selectedTicket.status)}`}>
                                                 {selectedTicket.status.replace("_", " ")}
                                             </span>
@@ -280,10 +281,14 @@ const StaffDashboardPage = () => {
                                             <div className="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 italic text-slate-600 font-bold text-sm leading-relaxed shadow-inner">
                                                 "{selectedTicket.description}"
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 <div className="bg-white border border-slate-100 p-4 rounded-2xl">
                                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Requester</p>
-                                                    <p className="font-black text-slate-800 truncate">{selectedTicket.studentName || selectedTicket.studentId}</p>
+                                                    <p className="text-[11px] font-mono font-black text-slate-800 whitespace-nowrap overflow-x-auto custom-scrollbar-thin">{selectedTicket.studentName || selectedTicket.studentId}</p>
+                                                </div>
+                                                <div className="bg-white border border-slate-100 p-4 rounded-2xl">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tracking ID</p>
+                                                    <p className="text-[11px] font-mono font-black text-slate-800 whitespace-nowrap overflow-x-auto custom-scrollbar-thin">{selectedTicket.id}</p>
                                                 </div>
                                                 <div className="bg-white border border-slate-100 p-4 rounded-2xl">
                                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Date Logged</p>
